@@ -14,7 +14,6 @@ class HumanCar : public Car
     ~HumanCar();
 
 
-
 };
 
 
