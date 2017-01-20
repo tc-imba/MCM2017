@@ -25,7 +25,7 @@ using namespace std;
 #include <algorithm>
 
 template<typename T1, typename T2>
-ostream &operator<<(ostream &os, const std::pair<T1, T2> T)
+ostream &operator<<(ostream &os, const std::pair<T1, T2> & T)
 {
     return os << "pair(" << T.first << "," << T.second << ")";
 };
@@ -39,7 +39,7 @@ ostream &operator<<(ostream &os, const std::pair<T1, T2> T)
  * v is the average speed in mile/h
  * s is the distance between two heads of the cars
  */
-pair<double, double> getRealitySpeedDistance(double hourCount, int paneNum)
+pair<double, double> getIdealSpeedDistance(double hourCount, int paneNum)
 {
     const double a = 81576.5927;
     const double carLength = 16. / 5280.;
