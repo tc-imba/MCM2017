@@ -14,7 +14,8 @@ class Layout
 public:
     struct Milepost
     {
-        double idealSpeed, idealDistance, mile, idealPeriod, idealCount;
+        double idealSpeed, idealDistance, idealPeriod, idealCount;
+        double mile, lastEnterTime;
         std::vector<std::list<Car *> > cars;
     };
 

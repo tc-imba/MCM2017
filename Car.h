@@ -10,11 +10,27 @@
 class Car
 {
 public:
+    enum STATE
+    {
+        UNIFORM = 0, ACCELERATE = 1, DECELERATE = -1, BRAKE = -2
+    };
+
+    double m_respondTime, m_speed, m_pos, m_acceleration;
+
+    int m_wait;
+
+    STATE m_state, m_stateNext;
+
     Car();
 
     virtual ~Car() = 0;
 
-    double m_respondTime, m_speed, m_pos, m_accerlation;
+    virtual void move(double distance, double period);
+
+    inline double idealDistance()
+    {
+        return m_speed * m_speed / (2 * BRAKE_ACCERLATION);
+    }
 };
 
 

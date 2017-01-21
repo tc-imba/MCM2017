@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper]{article}
 \usepackage{geometry}
 \geometry{left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm}
 \usepackage{amsmath}
@@ -15,13 +15,46 @@
 \cfoot{}
 
 \begin{document}
+
+    \section{A Letter to the Governor of the state of Washington}
+
+    \newpage
+    \tableofcontents
+    \newpage
+
 	\section{Introduction}
-	\subsection{Restatement and Clarification}
+	Traffic capacity is limited in many regions of the United States because the volume of traffic exceeds the designed capacity of the road networks. Autonomous cars are potential to quadruple capacity of highways without increasing number of lanes or roads. This results in less traffic congestion. Besides, autonomous cars can reduce parking space and traffic accidents, benefit the elderly and the disabled and relieve drivers from commuting hours. Thus, it’s worthy of further analysis.
+
+	\subsection{Restatement of the tasks}
+	We are expected to establish a model simulating traffic flow and to analyze the effect of self-driving cooperating cars. Specifically, we decompose the problem into several sub-problems:
+	\begin{itemize}
+	    \item Construct a model that can simulate traffic flow
+	    \item Form a comprehensive evaluation index indicating the performance under each circumstance
+	    \item Discuss the influence of the number of lanes
+	    \item Discuss the influence of peak and average traffic volume
+	    \item Discuss the influence of percentage of vehicles using self-driving, cooperating systems
+	    \item Analyze the characteristics of interaction between self-driving and non-self-driving vehicles, including percentage of self-driving vehicles, equilibria, tipping point and exclusively reserved lanes
+	    \item Design optimization method to enlarge traffic flow
+	    \item Propose policy that will improve traffic
+	\end{itemize}
+
 	\subsection{Assumptions and Rationale}
-	\subsubsection{Size of Veticles}
+	\subsubsection{Size of Vehicles}
 	We assume the width of every car is 6 feet and the length of every car is 16 feet.
+
+	\subsection{Notation}
+
 	\section{Model Design and Justification}
-	\subsection{Stopping Distance}
+
+	\subsection{Simulation Model Based on Cellular Automaton}
+	Cellular automation is always used for studying the moving objects having varying states in a number of discrete time. In this problem we study, the cellular automation is applied in the following aspects:
+	\begin{enumerate}
+		\item[$ \bullet $] The "cell" objects are the travelling cars on the highway.
+		\item[$ \bullet $] Each car has its location that the distance from the startMilepost and the lane it drives on are the coordinates.
+		\item[$ \bullet $] Each car has a state which is one of moving, accelerating or decelerating.
+		\item[$ \bullet $] Each car's state will be affected by a neighborhood which is the former car according to some rules.
+	\end{enumerate}
+	\subsubsection{Stopping Distance}
 	In order to keep safe, we assume the distance between any two vehicles is the stopping distance corresponding to the speed of the latter vehicle. When calculate the stopping distance, two factors are considered — human factors and vehicle factors.
 
 
@@ -39,7 +72,7 @@
 
 	In this model, every vehicle will maintain the exact stopping distance with the former one corresponding to its velocity. The means, while the distance is smaller than the theoretical value, the vehicle will slow down and vice versa. The maximum velocity is limited to 60 mile per hour.
 
-	\subsection{Initial Velocity}
+	\subsubsection{Initial Velocity}
 	The initial condition is affected by the traffic counts and the number of lanes. Here we define:
 	\begin{enumerate}
 		\item [\textbf{d}] the distance between two mileposts, i.e. endMilepost - startMilepost

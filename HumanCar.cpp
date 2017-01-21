@@ -6,7 +6,7 @@
 
 HumanCar::HumanCar() : Car()
 {
-    m_respondTime = 1.5;
+    m_respondTime = 1.;
 
 }
 

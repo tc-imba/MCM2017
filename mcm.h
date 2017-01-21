@@ -28,6 +28,7 @@ using namespace std;
 #define DIR_DESC false
 #define TIME_NORMAL true
 #define TIME_BUSY false
+const double BRAKE_ACCERLATION = 81576.5927;
 
 
 template<typename T1, typename T2>
@@ -55,19 +56,17 @@ struct Data
  */
 static pair<double, double> getIdealSpeedDistance(double hourCount, int paneNum)
 {
-    const double a = 81576.5927;
     // const double a = 97104;
     const double carLength = 16. / 5280.;
     const double maxV = 60.;
-
-    double A = hourCount / (2 * a);
+    double A = hourCount / (2 * BRAKE_ACCERLATION);
     double B = hourCount / 3600. - paneNum;
     double C = carLength * hourCount;
     double Delta = B * B - 2 * A * C;
     if (Delta <= 0) return pair<double, double>(hourCount / paneNum * 20. / 5280., 20. / 5280.);
     double v = (-B + sqrt(Delta)) / (2 * A);
     v = min(v, maxV);
-    double s = v * v / (2 * a) + v / 3600. + carLength;
+    double s = v * v / (2 * BRAKE_ACCERLATION) + v / 3600. + carLength;
     return pair<double, double>(v, s);
 }
 

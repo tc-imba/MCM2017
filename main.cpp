@@ -102,6 +102,7 @@ int main()
            >> data.type >> data.paneDESC >> data.paneASC;
         m_data.push_back(data);
     }
-    Layout lay(m_data, false, true);
+    Layout lay(m_data, false, false);
+    lay.simulate(3600);
     return 0;
 }
