@@ -3,3 +3,14 @@
 //
 
 #include "HumanCar.h"
+
+HumanCar::HumanCar() : Car()
+{
+    m_respondTime = 1.5;
+
+}
+
+HumanCar::~HumanCar()
+{
+
+}

@@ -1,0 +1,72 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{geometry}
+\geometry{left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\setlength{\parindent}{2em}
+\usepackage{url}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+\lhead{Team \#58893}
+\rhead{Page \thepage\ of \pageref{LastPage}}
+\cfoot{}
+
+\begin{document}
+	\section{Introduction}
+	\subsection{Restatement and Clarification}
+	\subsection{Assumptions and Rationale}
+	\subsubsection{Size of Veticles}
+	We assume the width of every car is 6 feet and the length of every car is 16 feet.
+	\section{Model Design and Justification}
+	\subsection{Stopping Distance}
+	In order to keep safe, we assume the distance between any two vehicles is the stopping distance corresponding to the speed of the latter vehicle. When calculate the stopping distance, two factors are considered — human factors and vehicle factors.
+
+
+	For the human part, there are two components — the human perception time which is the time needed for human to see the hazard and the human reaction time during which the brain convey the signal to the body. The human perception time ranges from 0.25 second to 0.5 second while the human reaction time varies from 0.25 second to 0.75 second.\cite{stopping} For convenience, we take the sum of these two parts as 1 second.
+
+	For the vehicle part, the braking distance concerns the maximum acceleration. We take the braking distance for vehicles at speed 100 kilometer per hour as 32 meters. The maximum acceleration is calculated then:
+	$$ a=\dfrac{(100\ km\cdot h^{-1})^2}{2\times 38\ m}=10.13\ m\cdot s^{-2}=81576.6\ mile\cdot h^{-2} $$
+	here we use mile per hour for the convenience of the subsequent calculation.
+
+	Then the stopping distance related to the velocity of the vehicle is achieved:
+	$$ s=\dfrac{v^2}{2a}+\dfrac{v}{3600}\ mile $$
+	where $ v $ is the velocity of the latter vehicle and $ a $ is the maximum acceleration $ 81576.6\ mile\cdot h^{-2} $.
+
+	Note that when the velocity is small enough it is no need to keep the stopping distance above. The main reason is the reaction time will be shortened. We assume the stopping distance is 4 feet as the velocity is below 18.75 mile per hour.
+
+	In this model, every vehicle will maintain the exact stopping distance with the former one corresponding to its velocity. The means, while the distance is smaller than the theoretical value, the vehicle will slow down and vice versa. The maximum velocity is limited to 60 mile per hour.
+
+	\subsection{Initial Velocity}
+	The initial condition is affected by the traffic counts and the number of lanes. Here we define:
+	\begin{enumerate}
+		\item [\textbf{d}] the distance between two mileposts, i.e. endMilepost - startMilepost
+		\item [\textbf{s}] stopping distance
+		\item [\textbf{l}] length of a car
+		\item [\textbf{v}] initial velocity of a car
+		\item [\textbf{c}] average hourly traffic counts
+		\item [\textbf{a}] maximum acceleration $ 81576.6\ mile\cdot h^{-2} $
+	\end{enumerate}
+	We first consider the average hourly traffic counts. Since we know the average daily traffic counts (2015) and 8\% of the daily traffic volume occurs during peak travel hours. We set the peak travel hour is one hour every day and in this period $$ c=\text{average daily traffic counts}\times 8\% $$ In the other hours, the traffic acounts is  $$ c=\text{average daily traffic counts}\times (1-8\%)/24=\text{average daily traffic counts}\times 4\%  $$
+
+	We know $ \dfrac{d}{s+l}\cdot n $ is the traffic counts between two mileposts in $ \dfrac{d}{v} $ hours. Then we achieve the equation:
+	$$ \dfrac{d}{s+l}\cdot n\cdot\frac{1}{\frac{d}{v}}=c\implies vn=(s+l)c $$
+
+	We have $ s=\dfrac{v^2}{2a}+\dfrac{v}{3600}\ mile $ and $ l=16\ ft=0.003\ mile $. After simplification, we have
+	$$ \dfrac{c}{2a}\cdot v^2+\left(\dfrac{c}{3600}-n\right)\cdot v+0.003=0 $$
+	$$ s+l=\dfrac{v^2}{2a}+\dfrac{v}{3600}+0.003 $$
+
+	We use these two equations to determine the initial distribution on the highway.
+
+
+	\section{Model Testing}
+	\section{Sensitivity Analysis}
+	\section{Strengths and Weaknesses}
+
+	\begin{thebibliography}{0}
+		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>}
+	\end{thebibliography}
+
+\end{document}

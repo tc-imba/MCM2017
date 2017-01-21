@@ -14,8 +14,7 @@ public:
 
     virtual ~Car() = 0;
 
-
-
+    double m_respondTime, m_speed, m_pos, m_accerlation;
 };
 
 

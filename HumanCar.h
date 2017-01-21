@@ -9,10 +9,10 @@
 
 class HumanCar : public Car
 {
+public:
     HumanCar();
 
     ~HumanCar();
-
 
 };
 

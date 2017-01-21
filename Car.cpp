@@ -7,7 +7,7 @@
 
 Car::Car()
 {
-
+    m_speed = 0;
 }
 
 Car::~Car()
