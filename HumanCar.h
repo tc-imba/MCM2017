@@ -14,6 +14,8 @@ public:
 
     ~HumanCar();
 
+    double getAcceleration();
+
 };
 
 

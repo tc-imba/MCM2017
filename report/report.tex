@@ -9,6 +9,7 @@
 \usepackage{url}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{float}
 \pagestyle{fancy}
 \lhead{Team \#58893}
 \rhead{Page \thepage\ of \pageref{LastPage}}
@@ -16,11 +17,11 @@
 
 \begin{document}
 
-    \section{A Letter to the Governor of the state of Washington}
+	\section{A Letter to the Governor of the state of Washington}
 
-    \newpage
-    \tableofcontents
-    \newpage
+	\newpage
+	\tableofcontents
+	\newpage
 
 	\section{Introduction}
 	Traffic capacity is limited in many regions of the United States because the volume of traffic exceeds the designed capacity of the road networks. Autonomous cars are potential to quadruple capacity of highways without increasing number of lanes or roads. This results in less traffic congestion. Besides, autonomous cars can reduce parking space and traffic accidents, benefit the elderly and the disabled and relieve drivers from commuting hours. Thus, it’s worthy of further analysis.
@@ -28,14 +29,14 @@
 	\subsection{Restatement of the tasks}
 	We are expected to establish a model simulating traffic flow and to analyze the effect of self-driving cooperating cars. Specifically, we decompose the problem into several sub-problems:
 	\begin{itemize}
-	    \item Construct a model that can simulate traffic flow
-	    \item Form a comprehensive evaluation index indicating the performance under each circumstance
-	    \item Discuss the influence of the number of lanes
-	    \item Discuss the influence of peak and average traffic volume
-	    \item Discuss the influence of percentage of vehicles using self-driving, cooperating systems
-	    \item Analyze the characteristics of interaction between self-driving and non-self-driving vehicles, including percentage of self-driving vehicles, equilibria, tipping point and exclusively reserved lanes
-	    \item Design optimization method to enlarge traffic flow
-	    \item Propose policy that will improve traffic
+		\item Construct a model that can simulate traffic flow
+		\item Form a comprehensive evaluation index indicating the performance under each circumstance
+		\item Discuss the influence of the number of lanes
+		\item Discuss the influence of peak and average traffic volume
+		\item Discuss the influence of percentage of vehicles using self-driving, cooperating systems
+		\item Analyze the characteristics of interaction between self-driving and non-self-driving vehicles, including percentage of self-driving vehicles, equilibria, tipping point and exclusively reserved lanes
+		\item Design optimization method to enlarge traffic flow
+		\item Propose policy that will improve traffic
 	\end{itemize}
 
 	\subsection{Assumptions and Rationale}
@@ -45,15 +46,30 @@
 	\subsection{Notation}
 
 	\section{Model Design and Justification}
-
 	\subsection{Simulation Model Based on Cellular Automaton}
 	Cellular automation is always used for studying the moving objects having varying states in a number of discrete time. In this problem we study, the cellular automation is applied in the following aspects:
 	\begin{enumerate}
-		\item[$ \bullet $] The "cell" objects are the travelling cars on the highway.
+		\item[$ \bullet $] The ``cell" objects are the travelling cars on the highway.
 		\item[$ \bullet $] Each car has its location that the distance from the startMilepost and the lane it drives on are the coordinates.
 		\item[$ \bullet $] Each car has a state which is one of moving, accelerating or decelerating.
-		\item[$ \bullet $] Each car's state will be affected by a neighborhood which is the former car according to some rules.
+		\item[$ \bullet $] Each car's state will be affected by a neighborhood which is the former car in different generations according to some rules.
 	\end{enumerate}
+
+	The simulation model for this problem has similar rules to the cellular automation that
+	$$ \text{vehicle state at time} t=f(\text{former vehicle state at time} (t-1)) $$
+
+	One of the simplest illustration is shown in Figure \ref{generation}. Generation 0 shows the initial state of six cells in the grid. Generation 1 shows the state of these six cells after a period of time. In the simulation model shown later more details will be added in such a basic model like the distance between the two cells and other factors concern in the highway traffic.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{generation}
+		\caption{A simple illustration for the state changing dependent on time}
+		\label{generation}
+	\end{figure}
+
+
+
+	\subsection{Non-Self-Driving Vehicles Model}
 	\subsubsection{Stopping Distance}
 	In order to keep safe, we assume the distance between any two vehicles is the stopping distance corresponding to the speed of the latter vehicle. When calculate the stopping distance, two factors are considered — human factors and vehicle factors.
 
@@ -72,7 +88,7 @@
 
 	In this model, every vehicle will maintain the exact stopping distance with the former one corresponding to its velocity. The means, while the distance is smaller than the theoretical value, the vehicle will slow down and vice versa. The maximum velocity is limited to 60 mile per hour.
 
-	\subsubsection{Initial Velocity}
+	\subsubsection{Initial Distribution}
 	The initial condition is affected by the traffic counts and the number of lanes. Here we define:
 	\begin{enumerate}
 		\item [\textbf{d}] the distance between two mileposts, i.e. endMilepost - startMilepost
@@ -91,15 +107,26 @@
 	$$ \dfrac{c}{2a}\cdot v^2+\left(\dfrac{c}{3600}-n\right)\cdot v+0.003=0 $$
 	$$ s+l=\dfrac{v^2}{2a}+\dfrac{v}{3600}+0.003 $$
 
-	We use these two equations to determine the initial distribution on the highway.
+	We use these two equations to determine the initial distribution on the highway. With known average hourly traffic counts and number of the lanes, the initial velocity of a car can be solved, leading to the stopping distance. Initially, there will be $ \dfrac{d}{l+s} $ cars on every lane in this section of the highway and $ l+s $ is the distance from the head of the former car and the head of the latter one. All the vehichles on this section of the highway will start to move with the initial speed.
+
+	\subsubsection{}
+
+
 
 
 	\section{Model Testing}
 	\section{Sensitivity Analysis}
 	\section{Strengths and Weaknesses}
 
+
+
+
+
+
+
 	\begin{thebibliography}{0}
-		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>}
+		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>.} Accessed 21 January 2017.
+		\bibitem{} Shiffman, Daniel. "Cellular Automata", \textit{The Nature of Code}, Lightning Source Inc, 2008. 323-354. Print.
 	\end{thebibliography}
 
 \end{document}

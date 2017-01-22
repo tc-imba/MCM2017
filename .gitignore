@@ -70,7 +70,7 @@ CTestTestfile.cmake
 ## Plugin-specific files:
 
 # IntelliJ
-/out/
+/output/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

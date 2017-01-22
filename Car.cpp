@@ -8,10 +8,13 @@
 Car::Car()
 {
     m_speed = 0;
-    m_acceleration = 6.;
+    //m_acceleration = 6.;
+    m_acceleration = 5. + 2. * ((double) rand()) / RAND_MAX;
     m_wait = 0;
     m_state = UNIFORM;
     m_stateNext = UNIFORM;
+    m_distance = 0;
+    m_deleteFlag = false;
 }
 
 Car::~Car()
@@ -19,7 +22,7 @@ Car::~Car()
 
 }
 
-void Car::move(double distance, double period)
+void Car::move(double period)
 {
     if (m_wait > 0)
     {
@@ -27,13 +30,13 @@ void Car::move(double distance, double period)
     }
     else
     {
-        auto d = idealDistance();
-        if (d < distance)
+        auto d = idealDistance(period);
+        if (d * 1.1 < m_distance)
         {
             m_wait = int(m_respondTime / period);
             m_stateNext = ACCELERATE;
         }
-        else if (d > distance)
+        else if (d * 0.9 > m_distance)
         {
             m_wait = int(m_respondTime / period);
             m_stateNext = DECELERATE;
@@ -43,7 +46,8 @@ void Car::move(double distance, double period)
     {
         m_state = m_stateNext;
     }
-    m_pos -= (m_speed * period + 0.5 * m_acceleration * m_state * period * period);
-    m_speed += m_acceleration * m_state * period;
+    auto newSpeed = max(0., min(60., m_speed + getAcceleration() * period));
+    m_pos -= 0.5 * (m_speed + newSpeed) * period / 3600.;
+    m_speed = newSpeed;
 }
 

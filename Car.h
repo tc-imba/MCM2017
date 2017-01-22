@@ -19,17 +19,24 @@ public:
 
     int m_wait;
 
+    double m_distance;
+
+    bool m_deleteFlag;
+
     STATE m_state, m_stateNext;
 
     Car();
 
     virtual ~Car() = 0;
 
-    virtual void move(double distance, double period);
+    virtual void move(double period);
 
-    inline double idealDistance()
+    virtual double getAcceleration() = 0;
+
+    inline double idealDistance(double period)
     {
-        return m_speed * m_speed / (2 * BRAKE_ACCERLATION);
+        return m_speed * m_speed / (2 * BRAKE_ACCERLATION)
+               + m_speed * m_respondTime / 3600. + 16. / 5280.;
     }
 };
 

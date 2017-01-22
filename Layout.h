@@ -8,6 +8,7 @@
 #include "mcm.h"
 #include "Car.h"
 #include "HumanCar.h"
+#include "AutoCar.h"
 
 class Layout
 {
@@ -20,13 +21,23 @@ public:
     };
 
     std::vector<Milepost> m_milepost;
-    double m_period;
+    double m_period, m_autoPercentage;
 
-    Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double period = 0.1);
+    std::string m_outputPath;
+
+    Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage);
 
     void addCar(std::list<Car *> &carQueue, double speed, double pos);
 
     void simulate(double time = 3600.);
+
+    ofstream m_speed_file;
+
+    void openFiles();
+
+    void closeFiles();
+
+    void printSpeed();
 
 };
 

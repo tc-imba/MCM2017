@@ -10,6 +10,7 @@ using namespace std;
 // STD LIBS
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 // IO Stream
 #include <iostream>
