@@ -17,8 +17,9 @@ Layout::Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double au
         auto speedDistance = getIdealSpeedDistance(traffic, paneNum);
         cout << i << '\t' << speedDistance << '\t';
 
+        m_milepost.push_back(Milepost());
+        Milepost &data = m_milepost.back();
 
-        Milepost data;
         data.idealSpeed = speedDistance.first;
         data.idealDistance = speedDistance.second;
         data.mile = m_data[i].end - m_data[i].start;
@@ -36,16 +37,27 @@ Layout::Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double au
         for (int j = 0; j < paneNum; j++)
         {
             std::list<Car *> carList;
+            Car *frontCar = NULL;
             for (int k = 1; k <= data.idealCount; k++)
             {
-                addCar(carList, data.idealSpeed,
-                        k * data.idealDistance - offsetDistance);
+                auto newCar = addCar(carList, data.idealSpeed, k * data.idealDistance - offsetDistance, i);
+                if (k == 1)
+                {
+                    if (i == 0) frontCar = NULL;
+                    else if (m_milepost[i - 1].cars.size() <= j) frontCar = NULL;
+                    else frontCar = m_milepost[i - 1].cars[j].back();
+                }
+                if (frontCar)frontCar->m_backCar = newCar;
+                newCar->m_frontCar = frontCar;
+                frontCar = newCar;
+
                 //cout << carList.back()->m_pos << '\t';
             }
             //cout << j << "\t" << carList.size() << endl;
             data.cars.push_back(carList);
         }
-        m_milepost.push_back(data);
+
+
         cout << data.cars[0].size() << '\t';
 
 
@@ -58,20 +70,21 @@ Layout::Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double au
 
 }
 
-void Layout::addCar(std::list<Car *> &carQueue, double speed, double pos)
+Car *Layout::addCar(std::list<Car *> &carQueue, double speed, double pos, int milepostNo)
 {
     Car *car;
     if (((double) rand()) / RAND_MAX < m_autoPercentage)
     {
-        car = new AutoCar();
+        car = new AutoCar(this, milepostNo);
     }
     else
     {
-        car = new HumanCar();
+        car = new HumanCar(this, milepostNo);
     }
     car->m_speed = speed;
     car->m_pos = pos;
     carQueue.push_back(car);
+    return car;
 }
 
 void Layout::simulate(double time)
@@ -112,16 +125,52 @@ void Layout::simulate(double time)
                 }
                 //(*it)->move(distance, m_period);
                 (*it)->m_distance = distance;
+                if ((*it)->m_distance <= 0)
+                {
+                    cout << i << "\t" << j << "\t" << k << "\t"
+                         << 1 << "/" << m_milepost[j].cars[k].size()
+                         << "\t" << (*it)->m_distance << endl;
+                    auto car = (*it);
+                    cout << m_milepost[j].mile << endl;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (!car->m_frontCar)break;
+                        cout << car->m_milepostNo << "\t" << car->m_pos << endl;
+                        car = car->m_frontCar;
+                    }
+                }
+
 
                 // 计算后面的车
                 if (m_milepost[j].cars[k].size() > 1)
                 {
-                    double lastPos = (*it++)->m_pos;
-                    for (; it != m_milepost[j].cars[k].end(); ++it)
+                    int index = 1;
+                    for (double lastPos = (*it++)->m_pos; it != m_milepost[j].cars[k].end(); ++it)
                     {
                         //(*it)->move((*it)->m_pos - lastPos, m_period);
                         (*it)->m_distance = (*it)->m_pos - lastPos;
+                        if ((*it)->m_distance <= 0)
+                        {
+                            cout << i << "\t" << j << "\t" << k << "\t"
+                                 << index + 1 << "/" << m_milepost[j].cars[k].size()
+                                 << "\t" << (*it)->m_distance << endl;
+                            auto car = (*it);
+                            cout << m_milepost[j].mile << endl;
+                            for (int i = 0; i < 10; i++)
+                            {
+                                if (!car->m_frontCar)break;
+                                cout << car->m_milepostNo << "\t" << car->m_pos << endl;
+                                car = car->m_frontCar;
+                            }
+                        }
+                        if ((*it)->m_pos > m_milepost[j].mile)
+                        {
+                            cout << i << "\t" << j << "\t" << k << "\t"
+                                 << index + 1 << "/" << m_milepost[j].cars[k].size()
+                                 << "\t" << (*it)->m_pos << "/" << m_milepost[j].mile << endl;
+                        }
                         lastPos = (*it)->m_pos;
+                        index++;
                     }
                 }
             }
@@ -139,22 +188,29 @@ void Layout::simulate(double time)
                 // 移动车
                 for (auto it:m_milepost[j].cars[k])
                 {
+                    //cout  << i << setw(4) << j << endl;
                     it->move(m_period);
                 }
 
                 // 判断第一辆车是否删除或并入前面
                 auto front = m_milepost[j].cars[k].front();
-                if (front->m_pos < 0)
+                else if (front->m_pos < 0)
                 {
                     m_milepost[j].cars[k].pop_front();
-                    if (front->m_deleteFlag)
+                    if (!front->m_frontCar)
                     {
+                        if (front->m_backCar)front->m_backCar->m_frontCar = NULL;
                         delete front;
                     }
                     else
                     {
                         m_milepost[j - 1].cars[k].push_back(front);
                         front->m_pos += m_milepost[j - 1].mile;
+                        if (front->m_milepostNo != j)
+                        {
+                            cout << j << endl;
+                        }
+                        front->m_milepostNo = j - 1;
                     }
                 }
 
@@ -166,14 +222,30 @@ void Layout::simulate(double time)
                     if (m_milepost[j + 1].cars.size() <= k)newCarFlag = true;
                     if (newCarFlag)
                     {
-                        addCar(m_milepost[j].cars[k], m_milepost[j].idealSpeed,
-                                m_milepost[j].mile);
+                        auto frontCar = m_milepost[j].cars[k].back();
+                        if (frontCar)
+                        {
+                            if (frontCar->m_pos + 20. / 5280. > m_milepost[j].mile)
+                            {
+                                continue;
+                            }
+                        }
+                        auto newCar = addCar(m_milepost[j].cars[k],
+                                m_milepost[j].idealSpeed, m_milepost[j].mile, j);
+                        if (frontCar) newCar->m_backCar = frontCar->m_backCar;
+                        if (newCar->m_backCar)newCar->m_backCar->m_frontCar = newCar;
+                        newCar->m_frontCar = frontCar;
+                        if (frontCar) frontCar->m_backCar = newCar;
                     }
                 }
             }
         }
 
-        if (i % 10 == 0) printSpeed();
+        if (i % 10 == 0)
+        {
+            //cout << i << endl;
+            printSpeed();
+        }
 
         /*
         //if (i % 10 != 0)continue;

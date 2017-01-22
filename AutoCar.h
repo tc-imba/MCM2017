@@ -10,7 +10,7 @@
 class AutoCar : public Car
 {
 public:
-    AutoCar();
+    AutoCar(Layout *layout, int milepostNo);
 
     ~AutoCar();
 

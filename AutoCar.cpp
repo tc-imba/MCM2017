@@ -4,7 +4,7 @@
 
 #include "AutoCar.h"
 
-AutoCar::AutoCar()
+AutoCar::AutoCar(Layout *layout, int milepostNo) : Car(layout, milepostNo)
 {
     m_respondTime = 0;
 }

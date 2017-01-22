@@ -3,10 +3,12 @@
 //
 
 #include "Car.h"
+#include "Layout.h"
 
-
-Car::Car()
+Car::Car(Layout *layout, int milepostNo)
 {
+    m_layout = layout;
+    m_milepostNo = milepostNo;
     m_speed = 0;
     //m_acceleration = 6.;
     m_acceleration = 5. + 2. * ((double) rand()) / RAND_MAX;
@@ -15,6 +17,7 @@ Car::Car()
     m_stateNext = UNIFORM;
     m_distance = 0;
     m_deleteFlag = false;
+    m_frontCar = m_backCar = NULL;
 }
 
 Car::~Car()
@@ -47,7 +50,35 @@ void Car::move(double period)
         m_state = m_stateNext;
     }
     auto newSpeed = max(0., min(60., m_speed + getAcceleration() * period));
-    m_pos -= 0.5 * (m_speed + newSpeed) * period / 3600.;
+    auto newPos = m_pos - 0.5 * (m_speed + newSpeed) * period / 3600.;
+    if (m_frontCar)
+    {
+        if (m_milepostNo != m_frontCar->m_milepostNo)
+        {
+            double mile = 0;
+            for (int i = m_frontCar->m_milepostNo; i < m_milepostNo; i++)
+            {
+                mile += m_layout->m_milepost[i].mile;
+            }
+            if (newPos + (mile - m_frontCar->m_pos) <= 21. / 5280.)
+            {
+                newPos = -(mile - m_frontCar->m_pos) + 20. / 5280.;
+                newSpeed = (m_pos - newPos) / (period / 3600.);
+                //cout << "test1\t" << newPos << "\t" << newSpeed << endl;
+            }
+        }
+        else if (newPos - m_frontCar->m_pos <= 21. / 5280.)
+        {
+            newPos = m_frontCar->m_pos + 20. / 5280.;
+            newSpeed = (m_pos - newPos) / (period / 3600.);
+        }
+    }
+    if (newPos >= m_layout->m_milepost[m_milepostNo].mile)
+    {
+        cout << m_milepostNo << "\t" << m_pos << "\t" << m_frontCar->m_pos << "\t" << newPos << "\t" << newSpeed
+             << endl;
+    }
+    m_pos = newPos;
     m_speed = newSpeed;
 }
 

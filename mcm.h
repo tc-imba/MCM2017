@@ -16,6 +16,7 @@ using namespace std;
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 
 // STL
 #include <string>
@@ -29,8 +30,16 @@ using namespace std;
 #define DIR_DESC false
 #define TIME_NORMAL true
 #define TIME_BUSY false
-const double BRAKE_ACCERLATION = 81576.5927;
 
+class Layout;
+
+class Car;
+
+class HumanCar;
+
+class AutoCar;
+
+const double BRAKE_ACCERLATION = 81576.5927;
 
 template<typename T1, typename T2>
 static ostream &operator<<(ostream &os, const std::pair<T1, T2> &T)

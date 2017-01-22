@@ -10,7 +10,7 @@
 class HumanCar : public Car
 {
 public:
-    HumanCar();
+    HumanCar(Layout *layout, int milepostNo);
 
     ~HumanCar();
 

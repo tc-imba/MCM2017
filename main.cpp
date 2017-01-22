@@ -45,6 +45,6 @@ int main(int argc, char *argv[])
     Layout lay(m_data, isNormal, isASC, autoPercentage);
     lay.m_period = period;
     lay.m_outputPath = "output/" + args[0] + "/";
-    lay.simulate(36);
+    lay.simulate(3600);
     return 0;
 }

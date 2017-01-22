@@ -25,7 +25,13 @@ public:
 
     STATE m_state, m_stateNext;
 
-    Car();
+    Car *m_frontCar, *m_backCar;
+
+    int m_milepostNo;
+
+    Layout *m_layout;
+
+    Car(Layout *layout, int milepostNo);
 
     virtual ~Car() = 0;
 

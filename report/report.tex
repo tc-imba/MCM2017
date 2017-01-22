@@ -39,9 +39,23 @@
 		\item Propose policy that will improve traffic
 	\end{itemize}
 
-	\subsection{Assumptions and Rationale}
-	\subsubsection{Size of Vehicles}
-	We assume the width of every car is 6 feet and the length of every car is 16 feet.
+	\subsection{Assumptions and Justifications}
+    To focus on the main problem, we make the following well-justified assumptions.
+
+    \begin{itemize}
+\item \textbf{The size of each vehicle is 16 feet $\times$ 6 feet.} Although there are sedan car, van, wagon and SUV, which are of different sizes, we assume that all vehicles on freeways are sedan cars because they are the major components of traffic.
+\item \textbf{All the vehicles uniformly accelerate and decelerate.} It is valueless to consider the process of acceleration and deceleration since it has little effect on the traffic flow. We assume a not-self-driving car has constant acceleration ranging from 5 to 7 $mile/h*s$ while a self-driving car has constant acceleration automatically calculated from the distance from the one immediately ahead. Specifically, all vehicles brake at 81576.6 $mile/h^2$.
+\item \textbf{The distance between two vehicles tends to maintain some specific value.} We assume that all vehicles are spaced compactly, which means they maintain some minimal safety distance and don’t spread apart. The detailed calculation method of safety distance is shown in Section \ref{sd}. For a not-self-driving vehicle, if the distance from the one immediately ahead is 10\% less than the safety distance, the vehicle decelerates and if the real distance is 10\% more than the safety distance, the vehicle accelerates. For a self-driving vehicle, as long as the real distance is not the same as safety distance, it adjusts its velocity.
+\item \textbf{We don’t consider abnormal phenomena.} Accidents, violation of traffic regulations (e.g. speeding) and any other special circumstance are of negligible researching significance in this case.
+\item \textbf{Either of the two directions accounts for half of the average daily traffic.} We assume same traffic volume for both sides of the roads.
+\item \textbf{Peak traffic hour lasts for approximately an hour.}  According to our experiences in daily life, peak traffic hour usually lasts for an hour. Besides, we know that 8\% of the daily traffic volume occurs during peak travel hours on average. If peak traffic hour lasts for two hours or even longer, then 4.18\% or more of the traffic volume occurs during regular time, which is higher than that of peak hours.
+\item \textbf{Not-self-driving cars decelerate randomly.} Without randomization, the model is a deterministic algorithm, i.e., the cars always move in a set pattern once the original state of the road is set, which is not a real-world case. Besides, with randomization, this model can simulate otherwise absent phantom traffic jams \footnotemark \footnotetext{Joseph Stromberg’s explanation of phantom traffic jam is as follows.
+\begin{quote}\textit{If there are enough cars on a highway, any minor disruptions to the flow of traffic can cause a self-reinforcing chain reaction: one car brakes slightly, and the ones behind it brake just a bit more to avoid hitting it, with the braking eventually amplifying until it produces a wave of stopped or slowed traffic.}\cite{phantom}\end{quote}}. We set the possibility of deceleration as 0.3.
+\item \textbf{Response time for human drivers is approximately 1s.} Humans, unlike self-driving cars, need time to react. Usually, it takes 0.75-1.5s for a driver to take action, so we set the response time as 1s.
+\item \textbf{All cars are exactly the calculated safety distance away from the one immediately ahead.} When the model is constructed, we need to input the initial state of the road. We assume all cars are initially well-spaced so that we can better observe the evolution of traffic flow under various circumstances.
+\item \textbf{We don’t consider lane changing.} The impact of this phenomenon on traffic flow is negligible compared with that of acceleration and deceleration.
+    \end{itemize}
+
 
 	\subsection{Notation}
 
@@ -70,7 +84,7 @@
 
 
 	\subsection{Non-Self-Driving Vehicles Model}
-	\subsubsection{Stopping Distance}
+	\subsubsection{Stopping Distance}\label{sd}
 	In order to keep safe, we assume the distance between any two vehicles is the stopping distance corresponding to the speed of the latter vehicle. When calculate the stopping distance, two factors are considered — human factors and vehicle factors.
 
 
@@ -107,9 +121,16 @@
 	$$ \dfrac{c}{2a}\cdot v^2+\left(\dfrac{c}{3600}-n\right)\cdot v+0.003=0 $$
 	$$ s+l=\dfrac{v^2}{2a}+\dfrac{v}{3600}+0.003 $$
 
-	We use these two equations to determine the initial distribution on the highway. With known average hourly traffic counts and number of the lanes, the initial velocity of a car can be solved, leading to the stopping distance. Initially, there will be $ \dfrac{d}{l+s} $ cars on every lane in this section of the highway and $ l+s $ is the distance from the head of the former car and the head of the latter one. All the vehichles on this section of the highway will start to move with the initial speed.
+	We use these two equations to determine the initial distribution on the highway. With known average hourly traffic counts and number of the lanes, the initial velocity of a car can be solved, leading to the stopping distance. Initially, there will be $ \dfrac{d}{l+s} $ cars on every lane in this section of the highway and $ l+s $ is the distance from the head of the former car and the head of the latter one. All the vehicles on this section of the highway will start to move with the initial speed.
 
-	\subsubsection{}
+	\subsubsection{Control Ruleset}
+	After the initial condition is set, we can simulate all the cars under the control rules and record the parameters of every cars including location, acceleration and velocity. These parameters can be used to calculate the average velocity, traffic flow and density of the cars in any section of the highway in future analysis. Here the control ruleset is as follows:
+	\begin{itemize}
+		\item Every vehicle adjusts the velocity by accelerating or decelerating according to the distance between the former car and itself. When the distance is 10\% longer than the stopping distance of its velocity, the vehicle will accelerate. Similarly, it will decelerate when the distance is 10\% shorter. 60 mile per hour is the maximum velocity.
+		\item The average daily traffic counts vary among different sections of a highway. This is caused by the difference between the number of the entering cars and the one of the leaving ones. This distinct values of the average daily traffic counts lead to different average velocity in different sections. As the first car of the latter section drives to the last car of the former section, it may have to change its velocity so that it can adapt the traffic condition in the new section. And its change of velocity will affect the state of the following vehicles and leads to a domino effect.
+		\item  Since every car is driven by a real human, there should be a randomization deceleration during the process of driving. This will also leads to a domino effect and slow down the cars behind it.
+	\end{itemize}
+
 
 
 
@@ -127,6 +148,7 @@
 	\begin{thebibliography}{0}
 		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>.} Accessed 21 January 2017.
 		\bibitem{} Shiffman, Daniel. "Cellular Automata", \textit{The Nature of Code}, Lightning Source Inc, 2008. 323-354. Print.
+		\bibitem{phantom} Stromberg, Joseph. "Why do traffic jams sometimes form for no reason?", Vox, \url{< http://www.vox.com/2014/11/24/7276027/traffic-jam>.} Accessed 22 January 2017.
 	\end{thebibliography}
 
 \end{document}

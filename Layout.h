@@ -27,7 +27,7 @@ public:
 
     Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage);
 
-    void addCar(std::list<Car *> &carQueue, double speed, double pos);
+    Car *addCar(std::list<Car *> &carQueue, double speed, double pos, int milepostNo);
 
     void simulate(double time = 3600.);
 

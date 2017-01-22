@@ -4,7 +4,7 @@
 
 #include "HumanCar.h"
 
-HumanCar::HumanCar() : Car()
+HumanCar::HumanCar(Layout *layout, int milepostNo) : Car(layout, milepostNo)
 {
     m_respondTime = 1.;
 }
