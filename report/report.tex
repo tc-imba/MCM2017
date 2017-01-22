@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage{indentfirst}
 \setlength{\parindent}{2em}
 \usepackage{url}
@@ -57,7 +58,27 @@
     \end{itemize}
 
 
-	\subsection{Notation}
+	\subsection{Notations}
+    All the variables used in this paper are listed in Table \ref{t1}.
+
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{lll}
+    \toprule
+		Symbol & Definition & Units \\
+		\midrule
+		$ d $     & the distance between two mileposts, i.e. endMilepost startMilepost & $mile$ \\
+		$ s $     & stopping distance for human-driving cars & $mile$ \\
+		$ s_c $ & safe distance for self-driving cars & $feet$\\
+		$ l $     & length of a car & $mile$ \\
+		$ v $     & velocity of a car & $mile/h$ \\
+		$ c $     & average hourly traffic counts & $1/h$ \\
+		$ a $     & maximum acceleration & $mile/h^2$ \\
+		\bottomrule
+    \end{tabular}
+    \caption{Symbol Table.}
+    \label{t1}
+    \end{table}
 
 	\section{Model Design and Justification}
 	\subsection{Simulation Model Based on Cellular Automaton}
@@ -76,7 +97,7 @@
 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[scale=0.5]{generation}
+		\includegraphics[scale=0.6]{generation}
 		\caption{A simple illustration for the state changing dependent on time}
 		\label{generation}
 	\end{figure}
@@ -103,15 +124,8 @@
 	In this model, every vehicle will maintain the exact stopping distance with the former one corresponding to its velocity. The means, while the distance is smaller than the theoretical value, the vehicle will slow down and vice versa. The maximum velocity is limited to 60 mile per hour.
 
 	\subsubsection{Initial Distribution}
-	The initial condition is affected by the traffic counts and the number of lanes. Here we define:
-	\begin{enumerate}
-		\item [\textbf{d}] the distance between two mileposts, i.e. endMilepost - startMilepost
-		\item [\textbf{s}] stopping distance
-		\item [\textbf{l}] length of a car
-		\item [\textbf{v}] initial velocity of a car
-		\item [\textbf{c}] average hourly traffic counts
-		\item [\textbf{a}] maximum acceleration $ 81576.6\ mile\cdot h^{-2} $
-	\end{enumerate}
+	The initial condition is affected by the traffic counts and the number of lanes.
+
 	We first consider the average hourly traffic counts. Since we know the average daily traffic counts (2015) and 8\% of the daily traffic volume occurs during peak travel hours. We set the peak travel hour is one hour every day and in this period $$ c=\text{average daily traffic counts}\times 8\% $$ In the other hours, the traffic acounts is  $$ c=\text{average daily traffic counts}\times (1-8\%)/24=\text{average daily traffic counts}\times 4\%  $$
 
 	We know $ \dfrac{d}{s+l}\cdot n $ is the traffic counts between two mileposts in $ \dfrac{d}{v} $ hours. Then we achieve the equation:
@@ -131,7 +145,35 @@
 		\item  Since every car is driven by a real human, there should be a randomization deceleration during the process of driving. This will also leads to a domino effect and slow down the cars behind it.
 	\end{itemize}
 
+	\subsection{Self-Driving Vehicles Model}
+	\subsubsection{Initial Condition}
+	In order to give a clearer comparison with the Non-Self-Driving Vehicles Model, the initial condition doesn't change in this section. This means there will be $ \dfrac{d}{l+s} $ cars on every lane in this section of the highway and $ l+s $ is the distance from the head of the former car and the head of the latter one. All the vehicles on this section of the highway will start to move with the initial speed. The distance and the initial speed are calculated by the formula in Non-Self-Driving Vehicles Model.
 
+	With the different control ruleset for self-driving vehicles, the simulation will show the real-time traffic situation with different percentage of self-driving cars after a period of time.
+
+	\subsubsection{Control Ruleset}
+	Due to various sensers and coorperating system on the self-driving vehicles, they can make more precise decisions and the ruleset is different from the human-driving one. Also, self-driving vehicles are more accurate.
+	\begin{itemize}
+		\item \textbf{There exists interaction between selfdriving
+		and non-self-driving vehicles.} The self-driving vehicles don't have a reaction time. When a self-driving vehicle drives behind a non-self-driving vehicle, we suppose the senser can obtain the infromation about the velocity of the former vehicle and the distance between the two vehicles. And to prevent the sudden action of the human-driving vehicle, the vehicle has to keep a stopping distance according to its velocity: $ s=\dfrac{v^2}{2a} $.
+		\item \textbf{There exists cooperation between self-driving cars.} When the former vehicle is another self-driving vehicle, the two vehicles can cooperate. Since we are not designing a self-driving car, we omit the detailed velocity changing in the first period of time. We set another standard for the stopping distance and call it safe distance $ s_c $. A safe range is assumed around $ s_c $. The safe distance and the safe range for different velocity is shown in Table \ref{range}.
+
+		\begin{table}[H]
+			\centering
+			\begin{tabular}{cccc}
+				\toprule
+				velocity[mile/h] & $ 0\sim20 $  & $ 20\sim40 $ & $ 40\sim60 $ \\
+				\midrule
+				Safe Distance $ s_c $[feet]  & 4     & 30    & 80 \\
+				Safe Range[feet] & $ 0\sim10 $  & $ 10\sim50 $ & $ 50\sim110 $ \\
+				\bottomrule
+			\end{tabular}%
+			\caption{The relation between the safe distance, the safe range and velocity}
+			\label{range}%
+		\end{table}%
+
+		For any two self-driving vehicles, if the velocity of the latter one falls on $ 20\sim 40\  mile/h $ and the distance between two cars falls on the corresponding safe range, here it is $ 10\sim50\  feet$, after a period of time, the distance is set as the safe distance, which is called a stable situation. In this process, we omit how the self-driving change its acceleration and adjust the distance but focus on the stable situation. As the stable situation is reached, with cooperation, the latter vehicle can just copy the action of the former one until their velocity no longer falls on $ 20\sim 40\  mile/h $, then they change velocity and approach another stable situation. If the distance between the two cars does not fall on the corresponding safe range, the latter vehicle travels with a constant acceleration until the distance enters the safe range.
+	\end{itemize}
 
 
 

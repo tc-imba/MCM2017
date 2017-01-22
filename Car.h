@@ -41,6 +41,7 @@ public:
 
     inline double idealDistance(double period)
     {
+        if (m_speed < 20.)return 20. / 5280.;
         return m_speed * m_speed / (2 * BRAKE_ACCERLATION)
                + m_speed * m_respondTime / 3600. + 16. / 5280.;
     }

@@ -90,7 +90,7 @@ Car *Layout::addCar(std::list<Car *> &carQueue, double speed, double pos, int mi
 void Layout::simulate(double time)
 {
     openFiles();
-    for (int i = 0; i < time / m_period; i++)
+    for (int i = 0; i <= time / m_period + 1; i++)
     {
         double now = i * m_period;
         for (int j = 0; j < m_milepost.size(); j++)
@@ -163,12 +163,12 @@ void Layout::simulate(double time)
                                 car = car->m_frontCar;
                             }
                         }
-                        if ((*it)->m_pos > m_milepost[j].mile)
+                        /*if ((*it)->m_pos > m_milepost[j].mile)
                         {
                             cout << i << "\t" << j << "\t" << k << "\t"
                                  << index + 1 << "/" << m_milepost[j].cars[k].size()
                                  << "\t" << (*it)->m_pos << "/" << m_milepost[j].mile << endl;
-                        }
+                        }*/
                         lastPos = (*it)->m_pos;
                         index++;
                     }
@@ -189,7 +189,14 @@ void Layout::simulate(double time)
                 for (auto it:m_milepost[j].cars[k])
                 {
                     //cout  << i << setw(4) << j << endl;
+                    auto speed = it->m_speed;
                     it->move(m_period);
+                    /*if (j == 66 && abs(it->m_speed) <= 1e-5)
+                    {
+                        cout << it->m_distance << "\t" << it->m_speed << "\t" << speed << "\t" << it->m_pos << "\t"
+                             << it->m_state
+                             << endl;
+                    }*/
                 }
 
                 // 判断第一辆车是否删除或并入前面
@@ -227,15 +234,16 @@ void Layout::simulate(double time)
                     if (newCarFlag)
                     {
                         auto frontCar = m_milepost[j].cars[k].back();
+                        auto pos = m_milepost[j].mile;
                         if (frontCar)
                         {
                             if (frontCar->m_pos + 20. / 5280. > m_milepost[j].mile)
                             {
-                                continue;
+                                pos = frontCar->m_pos + 21. / 5280.;
                             }
                         }
                         auto newCar = addCar(m_milepost[j].cars[k],
-                                m_milepost[j].idealSpeed, m_milepost[j].mile, j);
+                                m_milepost[j].idealSpeed, pos, j);
                         if (frontCar) newCar->m_backCar = frontCar->m_backCar;
                         if (newCar->m_backCar)newCar->m_backCar->m_frontCar = newCar;
                         newCar->m_frontCar = frontCar;
@@ -245,10 +253,9 @@ void Layout::simulate(double time)
             }
         }
 
-        if (i % 10 == 0)
+        if (i % 100 == 0)
         {
             cout << now << "/" << time << endl;
-            printf("\r");
             printSpeed();
         }
 
@@ -300,8 +307,19 @@ void Layout::printSpeed()
     {
         for (int j = 0; j < m_milepost[i].cars.size(); j++)
         {
-            m_speed_file << i << "\t" << j << "\t" << endl;
+            double speedSum = 0;
+            for (auto it:m_milepost[i].cars[j])
+            {
+                speedSum += it->m_speed;
+            }
+            double speedAvg = m_milepost[i].cars[j].size() > 0 ?
+                              speedSum / m_milepost[i].cars[j].size() : 0;
+            m_speed_file << i << "\t" << j << "\t" << speedAvg << "\t" << m_milepost[i].cars[j].size() << endl;
+            if (i == 66)
+            {
+                cout << i << "\t" << j << "\t" << speedAvg << "\t" << m_milepost[i].cars[j].size() << endl;
+            }
         }
-        m_speed_file << endl;
     }
+    m_speed_file << endl;
 }

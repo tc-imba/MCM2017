@@ -9,6 +9,7 @@ using namespace std;
 
 // STD LIBS
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <time.h>
 

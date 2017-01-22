@@ -11,7 +11,7 @@ Car::Car(Layout *layout, int milepostNo)
     m_milepostNo = milepostNo;
     m_speed = 0;
     //m_acceleration = 6.;
-    m_acceleration = 5. + 2. * ((double) rand()) / RAND_MAX;
+    m_acceleration = 2.5 + 0.5 * ((double) rand()) / RAND_MAX;
     m_wait = 0;
     m_state = UNIFORM;
     m_stateNext = UNIFORM;
@@ -27,7 +27,39 @@ Car::~Car()
 
 void Car::move(double period)
 {
-    if (m_wait > 0)
+    /*double distance = 0;
+    if (m_frontCar)
+    {
+        if (m_milepostNo != m_frontCar->m_milepostNo)
+        {
+            for (int i = m_frontCar->m_milepostNo; i < m_milepostNo; i++)
+            {
+                distance += m_layout->m_milepost[i].mile;
+            }
+            distance += m_pos - m_frontCar->m_pos;
+        }
+        else
+        {
+            distance = m_pos - m_frontCar->m_pos;
+        }
+    }
+    else
+    {
+        distance = idealDistance(period);
+    }
+    if (distance < 0)
+    {
+        cout << m_milepostNo << endl;
+    }
+    else if (distance <= 20)
+    {
+
+    }
+    else
+    {
+
+    }*/
+    if (m_wait >= 0)
     {
         m_wait--;
     }
@@ -45,7 +77,7 @@ void Car::move(double period)
             m_stateNext = DECELERATE;
         }
     }
-    if (m_wait <= 0 && m_state != m_stateNext)
+    if (m_wait < 0 && m_state != m_stateNext)
     {
         m_state = m_stateNext;
     }
@@ -60,25 +92,33 @@ void Car::move(double period)
             {
                 mile += m_layout->m_milepost[i].mile;
             }
-            if (newPos + (mile - m_frontCar->m_pos) <= 21. / 5280.)
+            if (newPos + (mile - m_frontCar->m_pos) <= 20. / 5280.)
             {
                 newPos = -(mile - m_frontCar->m_pos) + 20. / 5280.;
                 newSpeed = (m_pos - newPos) / (period / 3600.);
                 //cout << "test1\t" << newPos << "\t" << newSpeed << endl;
             }
         }
-        else if (newPos - m_frontCar->m_pos <= 21. / 5280.)
+        else if (newPos - m_frontCar->m_pos <= 20. / 5280.)
         {
+            if (m_milepostNo == 66)
+            {
+                //cout << newPos << "\t" << newSpeed;
+            }
             newPos = m_frontCar->m_pos + 20. / 5280.;
             newSpeed = (m_pos - newPos) / (period / 3600.);
+
         }
     }
     if (newPos >= m_layout->m_milepost[m_milepostNo].mile)
     {
-        cout << m_milepostNo << "\t" << m_pos << "\t" << m_frontCar->m_pos << "\t" << newPos << "\t" << newSpeed
-             << endl;
+        //cout << m_milepostNo << "\t" << m_pos << "\t" << m_frontCar->m_pos << "\t" << newPos << "\t" << newSpeed << endl;
     }
     m_pos = newPos;
     m_speed = newSpeed;
+    /*if (newSpeed < 1e-5)
+    {
+        cout << m_milepostNo << "\t" << m_pos << "\t" << m_frontCar->m_pos << "\t" << newPos << "\t" << newSpeed << endl;
+    }*/
 }
 

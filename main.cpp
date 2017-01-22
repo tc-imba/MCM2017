@@ -1,13 +1,10 @@
 #include "mcm.h"
 #include "Layout.h"
 
-
-const double period = 0.1;
-
 int main(int argc, char *argv[])
 {
-    const int MAX_ARG = 5;
-    string args[MAX_ARG] = {"5", "0", "0", "0", "0.1"};
+    const int MAX_ARG = 6;
+    string args[MAX_ARG] = {"5", "0", "0", "0", "0.1", "3600"};
     for (int i = 1; i <= min(argc, MAX_ARG); i++)
     {
         args[i - 1] = argv[i];
@@ -18,6 +15,7 @@ int main(int argc, char *argv[])
     bool isASC = args[2] == "1";
     double autoPercentage = atof(args[3].c_str());
     double period = atof(args[4].c_str());
+    double totalTime = atof(args[5].c_str());
 
     srand((unsigned) time(NULL));
 
@@ -45,6 +43,6 @@ int main(int argc, char *argv[])
     Layout lay(m_data, isNormal, isASC, autoPercentage);
     lay.m_period = period;
     lay.m_outputPath = "output/" + args[0] + "/";
-    lay.simulate(3600);
+    lay.simulate(totalTime);
     return 0;
 }
