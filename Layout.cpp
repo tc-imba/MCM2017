@@ -194,6 +194,10 @@ void Layout::simulate(double time)
 
                 // 判断第一辆车是否删除或并入前面
                 auto front = m_milepost[j].cars[k].front();
+                if (!front)
+                {
+                    //cout << i << "\t" << j << "\t" << k << "\t" << m_milepost[j].cars[k].size() << endl;
+                }
                 else if (front->m_pos < 0)
                 {
                     m_milepost[j].cars[k].pop_front();
@@ -243,7 +247,8 @@ void Layout::simulate(double time)
 
         if (i % 10 == 0)
         {
-            //cout << i << endl;
+            cout << now << "/" << time << endl;
+            printf("\r");
             printSpeed();
         }
 
