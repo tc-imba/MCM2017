@@ -104,13 +104,24 @@
 			\toprule
 			Symbol & Definition & Units \\
 			\midrule
-			$ d $     & the distance between two mileposts, i.e. endMilepost startMilepost & $mile$ \\
-			$ s $     & stopping distance for human-driving cars & $mile$ \\
-			$ s_c $ & safe distance for self-driving cars & $feet$\\
-			$ l $     & length of a car & $mile$ \\
-			$ v $     & velocity of a car & $mile/h$ \\
-			$ c $     & average hourly traffic counts & $1/h$ \\
-			$ a $     & maximum acceleration & $mile/h^2$ \\
+			$d$   & the distance between two mileposts, i.e. endMilepost - startMilepost & $mile$ \\
+			$s$   & stopping distance & $mile$ \\
+			$l$   & length of a car & $mile$ \\
+			$v$   & initial velocity of a car & $mile/h$ \\
+			$c$   & average hourly traffic counts & $1/h$ \\
+			$a$   & maximum acceleration & $mile/h^2$ \\
+			$v_{ij,nlane}$ & the average speed of the $j_{th}$ car on the $i_{th}$ section of the freeway which has \textit{nlane} lanes & $mile/h$ \\
+			$v_{i,nlane}$ & the average speed of all the vehicles on the $i_{th}$ section of the freeway which has \textit{nlane} lanes & $mile/h$ \\
+			$v_{nlane}$ & the average speed of all the vehicles on the freeway which has \textit{nlane} lanes & $mile/h$ \\
+			$\rho_{i,nlane}$ & the density of the $i_{th}$ section of the road which has \textit{nlane} lanes & $1/mile$ \\
+			$\rho_{nlane}$ & the average density of all the sections of the freeway which has \textit{nlane} lanes & $1/mile$ \\
+			$q_{i,lane}$ & the flow of the $lane_{th}$ lane of the $i_{th}$ section of the freeway which has \textit{nlane} lanes & $1/hour$ \\
+			$q_{nlane}$ & the average flow of all the sections of the freeway which has \textit{nlane} lanes & $2/hour$ \\
+			$nlane$ & the number of lanes & $unitless$ \\
+			${N_i}$ & the total number of vehicles on the $i_{th}$ section of the freeway & $unitless$ \\
+			$n$   & the number of sections & $unitless$ \\
+			$n_{i,lane}$ & the number of vehicles on the $lane_{th}$ lane of the $i_{th}$ section of the freeway & $unitless$ \\
+			$l_i$ & the length of the $i_{th}$ section of the freeway & $mile$ \\
 			\bottomrule
 		\end{tabular}
 		\caption{Symbol Table.}
@@ -254,12 +265,19 @@
 	\subsection{Reaction Time}
 	The reaction time ranges from 0.5 to 1.25 second.\ref{sd} To make an overall consideration, we choose 1 second as the reaction time. The longer reaction time leads to harder traffic condition.
 	\section{Strengths and Weaknesses}
+	\subsection{Strengths}
+	\begin{itemize}
+		\item \textbf{Considering various kinds of factors. }Our model takes the effects on traffic flow of the number of lanes, peak and average traffic volume and percentage of self-driving, cooperating vehicles into account.
+		\item \textbf{Analyzing large amount of data. }Our model analyzes the traffic condition on Interstates 5, 90 and 405, as well as State Route 520. Hundreds of sections of highway that each section is road between two Milepost and tens of millions of vehicles are simulated.
+		\item \textbf{Making detailed analysis. }Our model provides information about traffic flow, average velocity and traffic density of sections of the highway. Besides the spatiotemporal patterns histograms and line charts, we also use FSE to combine the three criteria and produce a new criterion Comprehensive Evaluation Index to show the comprehensive evaluation of the traffic condition under different circumstances. These analysis bring about an optimization method to enlarge traffic flow and improve traffic.
+	\end{itemize}
+	\subsection{Weakness}
+	\begin{itemize}
+		\item \textbf{No lane changing.} Due to time limit, we have not taken lane changing into account which means there is no overtaking in the whole process no matter for self-driving or human-driving vehicles. Overtaking may aggravate the traffic condition in the busy traffic. More seriously, the new-entering cars won't change their lanes which means the entering lane may be much more busy than other lanes if the traffic flow is huge. 
+		\item \textbf{Cancelling between the entering and leaving cars.} Since we do not have the number for the entering and leaving cars on each section of the highway, we simply consider that the traffic counts of one section is the sum of the previous section and the entering ones or the difference between the previous one and the leaving ones. This means some traffic volume is cancelled under this hypothesis. These traffic volume makes the traffic worse in the real world.
+	\end{itemize}
 	
-	
-	
-	
-	
-	
+	\newpage
 	
 	\begin{thebibliography}{0}
 		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>.} Accessed 21 January 2017. 
