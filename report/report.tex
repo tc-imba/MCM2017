@@ -15,18 +15,55 @@
 \lhead{Team \#58893}
 \rhead{Page \thepage\ of \pageref{LastPage}}
 \cfoot{}
+\usepackage{hyperref}
+\usepackage{setspace}
 
 \begin{document}
-
-	\section{A Letter to the Governor of the state of Washington}
-
+	
+	\section{A Letter to the Governor of the State of Washington}
+	\begin{spacing}{1.4}		
+		\begin{flushleft}
+			Dear Sir/Madam,
+		\end{flushleft} 
+		
+		We have heard that the governor of the state of Washington are asking of analysis of the effects of allowing self-driving, cooperating cars on the roads listed above in Thurston, Pierce, King, and Snohomish counties. After several days study and consideration, we are glad to submit our solution and we hope that will be good to the traffic condition in United State. Our team has designed a complete model and worked out a series of detailed analysis. We have taken account of various factors that may have effects on the traffic flow including the number of lanes, the peak or average hours and different percentage of vehicles using self-driving, cooperating systems. We also propose policy that will improve traffic and enlarge traffic flow. Our goal is to provide an elaborate plan to include self-driving, cooperating cars in the present traffic and alleviate the traffic pressure under the circumstances that the number of lanes or roads does not change. In this letter, we will introduce a brief view of our modeling approach and the final result to you.
+		
+		Here is the modeling approach:
+		\begin{enumerate}
+			\item The simulation model is based on the principle of the Cellular Automaton.
+			\item We first simulate the initial distribution on the whole Interstates 5, 90, and 405, as well as State Route 520. This initial condition is built on the average daily traffic counts in 2015.
+			\item We set reasonable rules to control the behavior of the non-self-driving cars on the highway and record its travel parameters.
+			\item Cars with self-driving, cooperating system are added by 10\% to 90\% with 20\% interval.
+		\end{enumerate}
+		
+		The analysis way is as follows:
+		\begin{enumerate}
+			\item The spatiotemporal pattern is plotted for different percentage of self-driving, cooperating cars to give an approximate view of the whole process. 
+			\item  The histogram is plotted to show the difference between the regular hours and the peak hours.
+			\item  The parameters of the individual cars are calculated into three main factors reflecting the traffic condition: traffic flow, average velocity and traffic density.
+			\item  The three main factors are analyzed by Fuzzy Synthetic Evaluation and Comprehensive Evaluation Index is worked out.
+			\item  The line chart of Comprehensive Evaluation Index for different percentage of self-driving, cooperating cars shows an elaborate answer to looking for an equilibria and tipping point. 
+		\end{enumerate}
+		
+		Our result shows that the increasing of self-driving, cooperating cars exactly eases the traffic pressure. Under some conditions, dedicating a lane to self-driving, cooperating cars is helpful. 
+		
+		Hope our solution can alleviate the traffic pressure and make the highway in the United State flows freely.
+		
+		\begin{flushleft}
+			Yours faithfully,\\
+			Team \#58893
+		\end{flushleft}
+		
+	\end{spacing}
+	
+	
 	\newpage
 	\tableofcontents
 	\newpage
-
+	
 	\section{Introduction}
-	Traffic capacity is limited in many regions of the United States because the volume of traffic exceeds the designed capacity of the road networks. Autonomous cars are potential to quadruple capacity of highways without increasing number of lanes or roads. This results in less traffic congestion. Besides, autonomous cars can reduce parking space and traffic accidents, benefit the elderly and the disabled and relieve drivers from commuting hours. Thus, it’s worthy of further analysis.
-
+	Traffic capacity is limited in many regions of the United States because the volume of traffic exceeds the designed capacity of the road networks. Autonomous cars are potential to quadruple capacity of highways without increasing number of lanes or roads. This results in less traffic congestion. Besides, autonomous cars can reduce parking space and traffic accidents, benefit the elderly and the disabled and relieve drivers from commuting hours. Thus, it’s worthy of further analysis. 
+	
 	\subsection{Restatement of the tasks}
 	We are expected to establish a model simulating traffic flow and to analyze the effect of self-driving cooperating cars. Specifically, we decompose the problem into several sub-problems:
 	\begin{itemize}
@@ -37,49 +74,49 @@
 		\item Discuss the influence of percentage of vehicles using self-driving, cooperating systems
 		\item Analyze the characteristics of interaction between self-driving and non-self-driving vehicles, including percentage of self-driving vehicles, equilibria, tipping point and exclusively reserved lanes
 		\item Design optimization method to enlarge traffic flow
-		\item Propose policy that will improve traffic
+		\item Propose policy that will improve traffic 
 	\end{itemize}
-
+	
 	\subsection{Assumptions and Justifications}
-    To focus on the main problem, we make the following well-justified assumptions.
-
-    \begin{itemize}
-\item \textbf{The size of each vehicle is 16 feet $\times$ 6 feet.} Although there are sedan car, van, wagon and SUV, which are of different sizes, we assume that all vehicles on freeways are sedan cars because they are the major components of traffic.
-\item \textbf{All the vehicles uniformly accelerate and decelerate.} It is valueless to consider the process of acceleration and deceleration since it has little effect on the traffic flow. We assume a not-self-driving car has constant acceleration ranging from 5 to 7 $mile/h*s$ while a self-driving car has constant acceleration automatically calculated from the distance from the one immediately ahead. Specifically, all vehicles brake at 81576.6 $mile/h^2$.
-\item \textbf{The distance between two vehicles tends to maintain some specific value.} We assume that all vehicles are spaced compactly, which means they maintain some minimal safety distance and don’t spread apart. The detailed calculation method of safety distance is shown in Section \ref{sd}. For a not-self-driving vehicle, if the distance from the one immediately ahead is 10\% less than the safety distance, the vehicle decelerates and if the real distance is 10\% more than the safety distance, the vehicle accelerates. For a self-driving vehicle, as long as the real distance is not the same as safety distance, it adjusts its velocity.
-\item \textbf{We don’t consider abnormal phenomena.} Accidents, violation of traffic regulations (e.g. speeding) and any other special circumstance are of negligible researching significance in this case.
-\item \textbf{Either of the two directions accounts for half of the average daily traffic.} We assume same traffic volume for both sides of the roads.
-\item \textbf{Peak traffic hour lasts for approximately an hour.}  According to our experiences in daily life, peak traffic hour usually lasts for an hour. Besides, we know that 8\% of the daily traffic volume occurs during peak travel hours on average. If peak traffic hour lasts for two hours or even longer, then 4.18\% or more of the traffic volume occurs during regular time, which is higher than that of peak hours.
-\item \textbf{Not-self-driving cars decelerate randomly.} Without randomization, the model is a deterministic algorithm, i.e., the cars always move in a set pattern once the original state of the road is set, which is not a real-world case. Besides, with randomization, this model can simulate otherwise absent phantom traffic jams \footnotemark \footnotetext{Joseph Stromberg’s explanation of phantom traffic jam is as follows.
-\begin{quote}\textit{If there are enough cars on a highway, any minor disruptions to the flow of traffic can cause a self-reinforcing chain reaction: one car brakes slightly, and the ones behind it brake just a bit more to avoid hitting it, with the braking eventually amplifying until it produces a wave of stopped or slowed traffic.}\cite{phantom}\end{quote}}. We set the possibility of deceleration as 0.3.
-\item \textbf{Response time for human drivers is approximately 1s.} Humans, unlike self-driving cars, need time to react. Usually, it takes 0.75-1.5s for a driver to take action, so we set the response time as 1s.
-\item \textbf{All cars are exactly the calculated safety distance away from the one immediately ahead.} When the model is constructed, we need to input the initial state of the road. We assume all cars are initially well-spaced so that we can better observe the evolution of traffic flow under various circumstances.
-\item \textbf{We don’t consider lane changing.} The impact of this phenomenon on traffic flow is negligible compared with that of acceleration and deceleration.
-    \end{itemize}
-
-
+	To focus on the main problem, we make the following well-justified assumptions.
+	
+	\begin{itemize}
+		\item \textbf{The size of each vehicle is 16 feet $\times$ 6 feet.} Although there are sedan car, van, wagon and SUV, which are of different sizes, we assume that all vehicles on freeways are sedan cars because they are the major components of traffic.
+		\item \textbf{All the vehicles uniformly accelerate and decelerate.} It is valueless to consider the process of acceleration and deceleration since it has little effect on the traffic flow. We assume a not-self-driving car has constant acceleration ranging from 5 to 7 $mile/h*s$ while a self-driving car has constant acceleration automatically calculated from the distance from the one immediately ahead. Specifically, all vehicles brake at 81576.6 $mile/h^2$. 
+		\item \textbf{The distance between two vehicles tends to maintain some specific value.} We assume that all vehicles are spaced compactly, which means they maintain some minimal safety distance and don’t spread apart. The detailed calculation method of safety distance is shown in Section \ref{sd}. For a not-self-driving vehicle, if the distance from the one immediately ahead is 10\% less than the safety distance, the vehicle decelerates and if the real distance is 10\% more than the safety distance, the vehicle accelerates. For a self-driving vehicle, as long as the real distance is not the same as safety distance, it adjusts its velocity. 
+		\item \textbf{We don’t consider abnormal phenomena.} Accidents, violation of traffic regulations (e.g. speeding) and any other special circumstance are of negligible researching significance in this case.
+		\item \textbf{Either of the two directions accounts for half of the average daily traffic.} We assume same traffic volume for both sides of the roads.
+		\item \textbf{Peak traffic hour lasts for approximately an hour.}  According to our experiences in daily life, peak traffic hour usually lasts for an hour. Besides, we know that 8\% of the daily traffic volume occurs during peak travel hours on average. If peak traffic hour lasts for two hours or even longer, then 4.18\% or more of the traffic volume occurs during regular time, which is higher than that of peak hours.
+		\item \textbf{Not-self-driving cars decelerate randomly.} Without randomization, the model is a deterministic algorithm, i.e., the cars always move in a set pattern once the original state of the road is set, which is not a real-world case. Besides, with randomization, this model can simulate otherwise absent phantom traffic jams \footnotemark \footnotetext{Joseph Stromberg’s explanation of phantom traffic jam is as follows.
+			\begin{quote}\textit{If there are enough cars on a highway, any minor disruptions to the flow of traffic can cause a self-reinforcing chain reaction: one car brakes slightly, and the ones behind it brake just a bit more to avoid hitting it, with the braking eventually amplifying until it produces a wave of stopped or slowed traffic.}\cite{phantom}\end{quote}}. We set the possibility of deceleration as 0.3.
+		\item \textbf{Response time for human drivers is approximately 1s.} Humans, unlike self-driving cars, need time to react. Usually, it takes 0.75-1.5s for a driver to take action, so we set the response time as 1s.
+		\item \textbf{All cars are exactly the calculated safety distance away from the one immediately ahead.} When the model is constructed, we need to input the initial state of the road. We assume all cars are initially well-spaced so that we can better observe the evolution of traffic flow under various circumstances. 
+		\item \textbf{We don’t consider lane changing.} The impact of this phenomenon on traffic flow is negligible compared with that of acceleration and deceleration. 
+	\end{itemize}
+	
+	
 	\subsection{Notations}
-    All the variables used in this paper are listed in Table \ref{t1}.
-
-    \begin{table}[H]
-    \centering
-    \begin{tabular}{lll}
-    \toprule
-		Symbol & Definition & Units \\
-		\midrule
-		$ d $     & the distance between two mileposts, i.e. endMilepost startMilepost & $mile$ \\
-		$ s $     & stopping distance for human-driving cars & $mile$ \\
-		$ s_c $ & safe distance for self-driving cars & $feet$\\
-		$ l $     & length of a car & $mile$ \\
-		$ v $     & velocity of a car & $mile/h$ \\
-		$ c $     & average hourly traffic counts & $1/h$ \\
-		$ a $     & maximum acceleration & $mile/h^2$ \\
-		\bottomrule
-    \end{tabular}
-    \caption{Symbol Table.}
-    \label{t1}
-    \end{table}
-
+	All the variables used in this paper are listed in Table \ref{t1}.
+	
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{lll}
+			\toprule
+			Symbol & Definition & Units \\
+			\midrule
+			$ d $     & the distance between two mileposts, i.e. endMilepost startMilepost & $mile$ \\
+			$ s $     & stopping distance for human-driving cars & $mile$ \\
+			$ s_c $ & safe distance for self-driving cars & $feet$\\
+			$ l $     & length of a car & $mile$ \\
+			$ v $     & velocity of a car & $mile/h$ \\
+			$ c $     & average hourly traffic counts & $1/h$ \\
+			$ a $     & maximum acceleration & $mile/h^2$ \\
+			\bottomrule
+		\end{tabular}
+		\caption{Symbol Table.}
+		\label{t1}
+	\end{table}
+	
 	\section{Model Design and Justification}
 	\subsection{Simulation Model Based on Cellular Automaton}
 	Cellular automation is always used for studying the moving objects having varying states in a number of discrete time. In this problem we study, the cellular automation is applied in the following aspects:
@@ -87,77 +124,77 @@
 		\item[$ \bullet $] The ``cell" objects are the travelling cars on the highway.
 		\item[$ \bullet $] Each car has its location that the distance from the startMilepost and the lane it drives on are the coordinates.
 		\item[$ \bullet $] Each car has a state which is one of moving, accelerating or decelerating.
-		\item[$ \bullet $] Each car's state will be affected by a neighborhood which is the former car in different generations according to some rules.
-	\end{enumerate}
-
-	The simulation model for this problem has similar rules to the cellular automation that
+		\item[$ \bullet $] Each car's state will be affected by a neighborhood which is the former car in different generations according to some rules. 
+	\end{enumerate} 
+	
+	The simulation model for this problem has similar rules to the cellular automation that 
 	$$ \text{vehicle state at time} t=f(\text{former vehicle state at time} (t-1)) $$
-
-	One of the simplest illustration is shown in Figure \ref{generation}. Generation 0 shows the initial state of six cells in the grid. Generation 1 shows the state of these six cells after a period of time. In the simulation model shown later more details will be added in such a basic model like the distance between the two cells and other factors concern in the highway traffic.
-
+	
+	One of the simplest illustration is shown in Figure \ref{generation}. Generation 0 shows the initial state of six cells in the grid. Generation 1 shows the state of these six cells after a period of time. In the simulation model shown later more details will be added in such a basic model like the distance between the two cells and other factors concern in the highway traffic. 
+	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[scale=0.6]{generation}
 		\caption{A simple illustration for the state changing dependent on time}
 		\label{generation}
 	\end{figure}
-
-
-
+	
+	
+	
 	\subsection{Non-Self-Driving Vehicles Model}
 	\subsubsection{Stopping Distance}\label{sd}
-	In order to keep safe, we assume the distance between any two vehicles is the stopping distance corresponding to the speed of the latter vehicle. When calculate the stopping distance, two factors are considered — human factors and vehicle factors.
-
-
+	In order to keep safe, we assume the distance between any two vehicles is the stopping distance corresponding to the speed of the latter vehicle. When calculate the stopping distance, two factors are considered — human factors and vehicle factors. 
+	
+	
 	For the human part, there are two components — the human perception time which is the time needed for human to see the hazard and the human reaction time during which the brain convey the signal to the body. The human perception time ranges from 0.25 second to 0.5 second while the human reaction time varies from 0.25 second to 0.75 second.\cite{stopping} For convenience, we take the sum of these two parts as 1 second.
-
+	
 	For the vehicle part, the braking distance concerns the maximum acceleration. We take the braking distance for vehicles at speed 100 kilometer per hour as 32 meters. The maximum acceleration is calculated then:
 	$$ a=\dfrac{(100\ km\cdot h^{-1})^2}{2\times 38\ m}=10.13\ m\cdot s^{-2}=81576.6\ mile\cdot h^{-2} $$
 	here we use mile per hour for the convenience of the subsequent calculation.
-
+	
 	Then the stopping distance related to the velocity of the vehicle is achieved:
 	$$ s=\dfrac{v^2}{2a}+\dfrac{v}{3600}\ mile $$
 	where $ v $ is the velocity of the latter vehicle and $ a $ is the maximum acceleration $ 81576.6\ mile\cdot h^{-2} $.
-
+	
 	Note that when the velocity is small enough it is no need to keep the stopping distance above. The main reason is the reaction time will be shortened. We assume the stopping distance is 4 feet as the velocity is below 18.75 mile per hour.
-
+	
 	In this model, every vehicle will maintain the exact stopping distance with the former one corresponding to its velocity. The means, while the distance is smaller than the theoretical value, the vehicle will slow down and vice versa. The maximum velocity is limited to 60 mile per hour.
-
+	
 	\subsubsection{Initial Distribution}
 	The initial condition is affected by the traffic counts and the number of lanes.
-
+	
 	We first consider the average hourly traffic counts. Since we know the average daily traffic counts (2015) and 8\% of the daily traffic volume occurs during peak travel hours. We set the peak travel hour is one hour every day and in this period $$ c=\text{average daily traffic counts}\times 8\% $$ In the other hours, the traffic acounts is  $$ c=\text{average daily traffic counts}\times (1-8\%)/24=\text{average daily traffic counts}\times 4\%  $$
-
+	
 	We know $ \dfrac{d}{s+l}\cdot n $ is the traffic counts between two mileposts in $ \dfrac{d}{v} $ hours. Then we achieve the equation:
 	$$ \dfrac{d}{s+l}\cdot n\cdot\frac{1}{\frac{d}{v}}=c\implies vn=(s+l)c $$
-
-	We have $ s=\dfrac{v^2}{2a}+\dfrac{v}{3600}\ mile $ and $ l=16\ ft=0.003\ mile $. After simplification, we have
+	
+	We have $ s=\dfrac{v^2}{2a}+\dfrac{v}{3600}\ mile $ and $ l=16\ ft=0.003\ mile $. After simplification, we have 
 	$$ \dfrac{c}{2a}\cdot v^2+\left(\dfrac{c}{3600}-n\right)\cdot v+0.003=0 $$
 	$$ s+l=\dfrac{v^2}{2a}+\dfrac{v}{3600}+0.003 $$
-
+	
 	We use these two equations to determine the initial distribution on the highway. With known average hourly traffic counts and number of the lanes, the initial velocity of a car can be solved, leading to the stopping distance. Initially, there will be $ \dfrac{d}{l+s} $ cars on every lane in this section of the highway and $ l+s $ is the distance from the head of the former car and the head of the latter one. All the vehicles on this section of the highway will start to move with the initial speed.
-
+	
 	\subsubsection{Control Ruleset}
 	After the initial condition is set, we can simulate all the cars under the control rules and record the parameters of every cars including location, acceleration and velocity. These parameters can be used to calculate the average velocity, traffic flow and density of the cars in any section of the highway in future analysis. Here the control ruleset is as follows:
 	\begin{itemize}
 		\item Every vehicle adjusts the velocity by accelerating or decelerating according to the distance between the former car and itself. When the distance is 10\% longer than the stopping distance of its velocity, the vehicle will accelerate. Similarly, it will decelerate when the distance is 10\% shorter. 60 mile per hour is the maximum velocity.
 		\item The average daily traffic counts vary among different sections of a highway. This is caused by the difference between the number of the entering cars and the one of the leaving ones. This distinct values of the average daily traffic counts lead to different average velocity in different sections. As the first car of the latter section drives to the last car of the former section, it may have to change its velocity so that it can adapt the traffic condition in the new section. And its change of velocity will affect the state of the following vehicles and leads to a domino effect.
 		\item  Since every car is driven by a real human, there should be a randomization deceleration during the process of driving. This will also leads to a domino effect and slow down the cars behind it.
-	\end{itemize}
-
+	\end{itemize}	
+	
 	\subsection{Self-Driving Vehicles Model}
 	\subsubsection{Initial Condition}
 	In order to give a clearer comparison with the Non-Self-Driving Vehicles Model, the initial condition doesn't change in this section. This means there will be $ \dfrac{d}{l+s} $ cars on every lane in this section of the highway and $ l+s $ is the distance from the head of the former car and the head of the latter one. All the vehicles on this section of the highway will start to move with the initial speed. The distance and the initial speed are calculated by the formula in Non-Self-Driving Vehicles Model.
-
+	
 	With the different control ruleset for self-driving vehicles, the simulation will show the real-time traffic situation with different percentage of self-driving cars after a period of time.
-
+	
 	\subsubsection{Control Ruleset}
 	Due to various sensers and coorperating system on the self-driving vehicles, they can make more precise decisions and the ruleset is different from the human-driving one. Also, self-driving vehicles are more accurate.
 	\begin{itemize}
 		\item \textbf{There exists interaction between selfdriving
-		and non-self-driving vehicles.} The self-driving vehicles don't have a reaction time. When a self-driving vehicle drives behind a non-self-driving vehicle, we suppose the senser can obtain the infromation about the velocity of the former vehicle and the distance between the two vehicles. And to prevent the sudden action of the human-driving vehicle, the vehicle has to keep a stopping distance according to its velocity: $ s=\dfrac{v^2}{2a} $.
-		\item \textbf{There exists cooperation between self-driving cars.} When the former vehicle is another self-driving vehicle, the two vehicles can cooperate. Since we are not designing a self-driving car, we omit the detailed velocity changing in the first period of time. We set another standard for the stopping distance and call it safe distance $ s_c $. A safe range is assumed around $ s_c $. The safe distance and the safe range for different velocity is shown in Table \ref{range}.
-
+			and non-self-driving vehicles.} The self-driving vehicles don't have a reaction time. When a self-driving vehicle drives behind a non-self-driving vehicle, we suppose the senser can obtain the infromation about the velocity of the former vehicle and the distance between the two vehicles. And to prevent the sudden action of the human-driving vehicle, the vehicle has to keep a stopping distance according to its velocity: $ s=\dfrac{v^2}{2a} $. 
+		\item \textbf{There exists cooperation between self-driving cars.} When the former vehicle is another self-driving vehicle, the two vehicles can cooperate. Since we are not designing a self-driving car, we omit the detailed velocity changing in the first period of time. We set another standard for the stopping distance and call it safe distance $ s_c $. A safe range is assumed around $ s_c $. The safe distance and the safe range for different velocity is shown in Table \ref{range}. 
+		
 		\begin{table}[H]
 			\centering
 			\begin{tabular}{cccc}
@@ -171,26 +208,26 @@
 			\caption{The relation between the safe distance, the safe range and velocity}
 			\label{range}%
 		\end{table}%
-
+		
 		For any two self-driving vehicles, if the velocity of the latter one falls on $ 20\sim 40\  mile/h $ and the distance between two cars falls on the corresponding safe range, here it is $ 10\sim50\  feet$, after a period of time, the distance is set as the safe distance, which is called a stable situation. In this process, we omit how the self-driving change its acceleration and adjust the distance but focus on the stable situation. As the stable situation is reached, with cooperation, the latter vehicle can just copy the action of the former one until their velocity no longer falls on $ 20\sim 40\  mile/h $, then they change velocity and approach another stable situation. If the distance between the two cars does not fall on the corresponding safe range, the latter vehicle travels with a constant acceleration until the distance enters the safe range.
 	\end{itemize}
-
-
-
+	
+	
+	
 	\section{Model Testing}
 	\section{Sensitivity Analysis}
 	\section{Strengths and Weaknesses}
-
-
-
-
-
-
-
+	
+	
+	
+	
+	
+	
+	
 	\begin{thebibliography}{0}
-		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>.} Accessed 21 January 2017.
+		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>.} Accessed 21 January 2017. 
 		\bibitem{} Shiffman, Daniel. "Cellular Automata", \textit{The Nature of Code}, Lightning Source Inc, 2008. 323-354. Print.
-		\bibitem{phantom} Stromberg, Joseph. "Why do traffic jams sometimes form for no reason?", Vox, \url{< http://www.vox.com/2014/11/24/7276027/traffic-jam>.} Accessed 22 January 2017.
+		\bibitem{phantom} Stromberg, Joseph. "Why do traffic jams sometimes form for no reason?", Vox, \url{< http://www.vox.com/2014/11/24/7276027/traffic-jam>.} Accessed 22 January 2017. 
 	\end{thebibliography}
-
+	
 \end{document}
