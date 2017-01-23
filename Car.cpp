@@ -27,38 +27,6 @@ Car::~Car()
 
 void Car::move(double period)
 {
-    /*double distance = 0;
-    if (m_frontCar)
-    {
-        if (m_milepostNo != m_frontCar->m_milepostNo)
-        {
-            for (int i = m_frontCar->m_milepostNo; i < m_milepostNo; i++)
-            {
-                distance += m_layout->m_milepost[i].mile;
-            }
-            distance += m_pos - m_frontCar->m_pos;
-        }
-        else
-        {
-            distance = m_pos - m_frontCar->m_pos;
-        }
-    }
-    else
-    {
-        distance = idealDistance(period);
-    }
-    if (distance < 0)
-    {
-        cout << m_milepostNo << endl;
-    }
-    else if (distance <= 20)
-    {
-
-    }
-    else
-    {
-
-    }*/
     if (m_wait >= 0)
     {
         m_wait--;
@@ -101,10 +69,6 @@ void Car::move(double period)
         }
         else if (newPos - m_frontCar->m_pos <= 20. / 5280.)
         {
-            if (m_milepostNo == 66)
-            {
-                //cout << newPos << "\t" << newSpeed;
-            }
             newPos = m_frontCar->m_pos + 20. / 5280.;
             newSpeed = (m_pos - newPos) / (period / 3600.);
 
