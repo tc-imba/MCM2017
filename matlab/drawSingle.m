@@ -20,7 +20,6 @@ function drawSingle(result,filepath)
             if(sum(yValue(i,:))>0)
                 hold on;
                 plot(xValue,yValue(i,:),'-*');
-
                 hold off;
             end
         end
