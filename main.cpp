@@ -26,8 +26,8 @@ int simulate(const std::vector<Data> &m_data, bool isNormal, bool isASC, string 
 int main(int argc, char *argv[])
 {
     const int MAX_ARG = 3;
-    string args[MAX_ARG] = {"5" "3600", ""};
-    for (int i = 1; i <= min(argc, MAX_ARG); i++)
+    string args[MAX_ARG] = {"5", "3600", ""};
+    for (int i = 1; i <= min(argc - 1, MAX_ARG); i++)
     {
         args[i - 1] = argv[i];
     }
@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     {
         cout << args[i] << "\t";
     }
+    cout << (args[2] == "");
     cout << endl;
 
     name = args[0];
@@ -75,11 +76,14 @@ int main(int argc, char *argv[])
         if (args[2] == "" || args[2] == "0")
         {
             simulate(m_data, false, false, autoPercentage);
-            simulate(m_data, true, false, autoPercentage);
         }
-        else if (args[2] == "" || args[2] == "1")
+        if (args[2] == "" || args[2] == "1")
         {
             simulate(m_data, false, true, autoPercentage);
+        }
+        if (args[2] == "" || args[2] == "2")
+        {
+            simulate(m_data, true, false, autoPercentage);
             simulate(m_data, true, true, autoPercentage);
         }
     }
