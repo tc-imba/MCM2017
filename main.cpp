@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     }
     Layout lay(m_data, isNormal, isASC, autoPercentage);
     lay.m_period = period;
-    lay.m_outputPath = "output/" + args[0] + "_" + args[6] + ".txt";
+    lay.m_outputPath = "output/" + args[6] + ".txt";
     if (!lay.openFile())return -1;
     lay.simulate(totalTime);
     lay.printSpeed(totalTime / period);

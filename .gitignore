@@ -144,3 +144,5 @@ dkms.conf
 *.iml
 out
 gen
+
+!output/.gitkeep
