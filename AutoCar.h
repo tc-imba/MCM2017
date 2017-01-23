@@ -16,6 +16,9 @@ public:
 
     double getAcceleration();
 
+    void move(double period);
+
+    bool m_chain;
 };
 
 
