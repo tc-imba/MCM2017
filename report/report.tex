@@ -17,7 +17,7 @@
 \cfoot{}
 \usepackage{hyperref}
 \usepackage{setspace}
-
+\usepackage{pdfpages}
 \usepackage{listings}
 	\lstset{
 		basicstyle=\tt,
@@ -45,6 +45,7 @@
 \usepackage{xcolor}
 
 \begin{document}
+	\includepdf{2017Summary.pdf}
 
 	\section{A Letter to the Governor of the State of Washington}
 	\begin{spacing}{1.4}
@@ -308,8 +309,35 @@ where $q_{i,lane}$ stands for the flow of the $lane_{th}$ lane of the $i_{th}$ s
 
 
 
-
 	\subsubsection{Peak and/or average traffic volume }%直方图
+	In order to show the effects on the traffic of the percentage of the self-driving, cooperating cars and period of time, peak and/or average traffic volum, we plot the bar graphs to show the tendence of the three parameters with the change of these two variables.
+
+	In Figure \ref{all_bar_1}, we can have a look at the relation between the velocity and these two variables. The self-driving, cooperating cars do good to the traffic condition only in peak hours. We found that in peak hours, the effects of this new kind of cars increase almost linear from 10\% to 70\% and reaches a maximum at 90\%. In regular times, almost all the vehicle has a speed of 60 mile per hour.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{../imgs/all_bar_1}
+		\caption{Relation between the velocity and the percentage of the self-driving, cooperating cars and period of time}
+		\label{all_bar_1}
+	\end{figure}
+
+	In Figure \ref{all_bar_2}, we can have a look at the relation between the flow and these two variables. The self-driving, cooperating cars do good to the traffic condition only in peak hours. We found that in peak hours, the effects of this new kind of cars increase almost linear from 10\% to 90\% and has a tipping point a 100\%. In regular times, the flow is confined by the indeed volume vehicle, thus it shows no relation for the change of the percentage of self-driving cars.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{../imgs/all_bar_2}
+		\caption{Relation between the flow and the percentage of the self-driving, cooperating cars and period of time}
+		\label{all_bar_2}
+	\end{figure}
+
+	In Figure \ref{all_bar_3}, we can have a look at the relation between the density and these two variables. The self-driving, cooperating cars do good to the traffic condition. We found that in peak hours, the effects of this new kind of cars increase almost linear from 10\% to 100\%. In regular times, the density is determined by the indeed volume of vehicles, thus it shows no relation for the change of the percentage of self-driving cars.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.5]{../imgs/all_bar_3}
+		\caption{Relation between the density and the percentage of the self-driving, cooperating cars and period of time}
+		\label{all_bar_3}
+	\end{figure}
 
 	\subsection{Optimal situation investigation}
 	\subsubsection{Comprehensive Evaluation Index}
