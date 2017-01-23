@@ -13,7 +13,8 @@ function A=readData(route)
                 end
                 str=['../output/',route,'_',type_list(i,:),'_',order,'_',auto_list(k,:),'.txt'];
                 temp=textread(str);
-                A(i,j,k,:,1:5)=temp(:,1:5);
+                s=size(temp);
+                A(i,j,k,1:s(1),1:5)=temp(1:s(1),1:5);
             end
         end
     end
