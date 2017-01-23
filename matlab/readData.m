@@ -1,3 +1,7 @@
+%************************************************* 
+% readData.m
+%*************************************************
+
 function A=readData(route)
     order_list=['asc ';'desc'];
     type_list=['norm';'busy'];

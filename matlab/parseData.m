@@ -1,3 +1,7 @@
+%************************************************* 
+% parseData.m
+%************************************************* 
+
 function [result,mileSumArr,mileNumArr] = parseData( route,n )
     D=readData(route);
     result=[];
