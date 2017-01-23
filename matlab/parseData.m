@@ -117,8 +117,6 @@ function [result,mileSumArr,mileNumArr] = parseData( route,n )
         end
 
     end
-    
-    
-    
+
 end
 
