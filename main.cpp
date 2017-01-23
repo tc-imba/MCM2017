@@ -1,21 +1,46 @@
 #include "mcm.h"
 #include "Layout.h"
 
+const double period = 0.1;
+double totalTime = 0;
+string name = "";
+
+int simulate(const std::vector<Data> &m_data, bool isNormal, bool isASC, string autoPercentage)
+{
+    Layout lay(m_data, isNormal, isASC, atof(autoPercentage.c_str()));
+    lay.m_period = period;
+    lay.m_outputPath = "output/";
+    lay.m_outputPath += name + "_";
+    lay.m_outputPath += (isNormal ? "norm_" : "busy_");
+    lay.m_outputPath += (isASC ? "asc_" : "desc_");
+    lay.m_outputPath += autoPercentage;
+    lay.m_outputPath += ".txt";
+    cout << lay.m_outputPath << endl;
+    if (!lay.openFile())return -1;
+    lay.simulate(totalTime);
+    lay.printSpeed(totalTime / period);
+    lay.closeFile();
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
-    const int MAX_ARG = 7;
-    string args[MAX_ARG] = {"5", "0", "0", "0", "0.1", "3600", "1"};
+    const int MAX_ARG = 2;
+    string args[MAX_ARG] = {"5" "3600"};
     for (int i = 1; i <= min(argc, MAX_ARG); i++)
     {
         args[i - 1] = argv[i];
     }
 
-    string filename = "data/" + args[0] + ".txt";
-    bool isNormal = args[1] == "1";
-    bool isASC = args[2] == "1";
-    double autoPercentage = atof(args[3].c_str());
-    double period = atof(args[4].c_str());
-    double totalTime = atof(args[5].c_str());
+    for (int i = 0; i < MAX_ARG; i++)
+    {
+        cout << args[i] << "\t";
+    }
+    cout << endl;
+
+    name = args[0];
+    string filename = "data/" + name + ".txt";
+    totalTime = atof(args[1].c_str());
 
     srand((unsigned) time(NULL));
 
@@ -35,17 +60,24 @@ int main(int argc, char *argv[])
         istringstream ss(str);
         if (ss.eof())continue;
         Data data;
-        data.routeId = 5;
+        data.routeId = atoi(name.c_str());
         ss >> data.start >> data.end >> data.traffic
            >> data.type >> data.paneDESC >> data.paneASC;
         m_data.push_back(data);
     }
-    Layout lay(m_data, isNormal, isASC, autoPercentage);
-    lay.m_period = period;
-    lay.m_outputPath = "output/" + args[6] + ".txt";
-    if (!lay.openFile())return -1;
-    lay.simulate(totalTime);
-    lay.printSpeed(totalTime / period);
-    lay.closeFile();
+
+    cout << m_data.size() << endl;
+
+    std::vector<string> percentVec = {"0.0", "0.1", "0.3", "0.5", "0.7", "0.9", "1.0"};
+
+    for (auto autoPercentage : percentVec)
+    {
+        simulate(m_data, false, false, autoPercentage);
+        simulate(m_data, false, true, autoPercentage);
+        simulate(m_data, true, false, autoPercentage);
+        simulate(m_data, true, true, autoPercentage);
+    }
+
+
     return 0;
 }

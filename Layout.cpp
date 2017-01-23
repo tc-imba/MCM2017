@@ -4,7 +4,7 @@
 
 #include "Layout.h"
 
-Layout::Layout(vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage)
+Layout::Layout(vector <Data> m_data, bool isNormal, bool isASC, double autoPercentage)
 {
     m_autoPercentage = autoPercentage;
 
@@ -19,7 +19,7 @@ Layout::Layout(vector <Data> &m_data, bool isNormal, bool isASC, double autoPerc
         int paneNum = isASC ? m_data[i].paneASC : m_data[i].paneDESC;
         double traffic = m_data[i].traffic * (isNormal ? 0.02 : 0.04);
         auto speedDistance = getIdealSpeedDistance(traffic, paneNum);
-        cout << i << '\t' << speedDistance << '\t';
+        //cout << i << '\t' << speedDistance << '\t';
 
         m_milepost.push_back(Milepost());
         Milepost &data = m_milepost.back();
@@ -63,13 +63,13 @@ Layout::Layout(vector <Data> &m_data, bool isNormal, bool isASC, double autoPerc
         }
 
 
-        cout << data.cars[0].size() << '\t';
+        //cout << data.cars[0].size() << '\t';
 
 
         // 计算下一辆车的偏移
         offsetDistance += data.mile - ((int) data.idealCount) * data.idealDistance;
 
-        cout << endl;
+        //cout << endl;
 
     }
 
@@ -94,7 +94,14 @@ Car *Layout::addCar(std::list<Car *> &carQueue, double speed, double pos, int mi
 
 void Layout::simulate(double time)
 {
-    for (int i = 0; i <= time / m_period + 1; i++)
+    int maxI = int(time / m_period + 1);
+    for (int i = 0; i < 50; i++)
+    {
+        cout << '*';
+    }
+    cout << endl << '>';
+
+    for (int i = 0; i <= maxI; i++)
     {
         double now = i * m_period;
         for (int j = 0; j < m_milepost.size(); j++)
@@ -264,9 +271,10 @@ void Layout::simulate(double time)
         }
 
 
-        if (i % 600 == 0)
+        if (i % (maxI / 50) == 0)
         {
-            cout << now << "/" << time << endl;
+            //cout << now << "/" << time << endl;
+            cout << "\b->";
             //printSpeed(600);
         }
 
@@ -307,4 +315,5 @@ void Layout::printSpeed(double interval)
         }
     }
     m_speed_file << endl;
+    cout << endl;
 }

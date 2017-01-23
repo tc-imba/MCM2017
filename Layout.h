@@ -32,7 +32,7 @@ public:
 
     std::string m_outputPath;
 
-    Layout(vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage);
+    Layout(vector <Data> m_data, bool isNormal, bool isASC, double autoPercentage);
 
     Car *addCar(std::list<Car *> &carQueue, double speed, double pos, int milepostNo);
 
