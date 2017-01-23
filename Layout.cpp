@@ -95,7 +95,7 @@ Car *Layout::addCar(std::list<Car *> &carQueue, double speed, double pos, int mi
 void Layout::simulate(double time)
 {
     int maxI = int(time / m_period + 1);
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 51; i++)
     {
         cout << '*';
     }
@@ -274,7 +274,7 @@ void Layout::simulate(double time)
         if (i % (maxI / 50) == 0)
         {
             //cout << now << "/" << time << endl;
-            cout << "\b->";
+            cout << "\b->" << flush;
             //printSpeed(600);
         }
 
