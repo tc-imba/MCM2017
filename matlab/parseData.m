@@ -23,8 +23,10 @@ function [result,mileSumArr,mileNumArr] = parseData( route,n )
             sizeDATA=size(DATA);
 
             [milepostStart,milepostEnd]=textread(['../data/',route,'.txt'],'%f%f%*[^\n]');
+            milepost=zeros(1,length(milepostStart));
             milepost(:)=milepostEnd(:)-milepostStart(:);
-               
+            
+            
             mileSum=sum(milepost);
             mileSumPath=zeros(1,5);
             mileNumPath=zeros(1,5);
