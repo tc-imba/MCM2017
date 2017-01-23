@@ -4,11 +4,15 @@
 
 #include "Layout.h"
 
-Layout::Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage)
+Layout::Layout(vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage)
 {
     m_autoPercentage = autoPercentage;
 
     double offsetDistance = 0.;
+    if (isASC)
+    {
+        std::reverse(m_data.begin(), m_data.end());
+    }
 
     for (int i = 0; i < m_data.size(); i++)
     {
@@ -55,6 +59,7 @@ Layout::Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double au
             }
             //cout << j << "\t" << carList.size() << endl;
             data.cars.push_back(carList);
+            data.statData.push_back(stat());
         }
 
 
@@ -89,7 +94,6 @@ Car *Layout::addCar(std::list<Car *> &carQueue, double speed, double pos, int mi
 
 void Layout::simulate(double time)
 {
-    openFiles();
     for (int i = 0; i <= time / m_period + 1; i++)
     {
         double now = i * m_period;
@@ -125,7 +129,7 @@ void Layout::simulate(double time)
                 }
                 //(*it)->move(distance, m_period);
                 (*it)->m_distance = distance;
-                if ((*it)->m_distance <= 0)
+                /*if ((*it)->m_distance <= 0)
                 {
                     cout << i << "\t" << j << "\t" << k << "\t"
                          << 1 << "/" << m_milepost[j].cars[k].size()
@@ -138,7 +142,7 @@ void Layout::simulate(double time)
                         cout << car->m_milepostNo << "\t" << car->m_pos << endl;
                         car = car->m_frontCar;
                     }
-                }
+                }*/
 
 
                 // 计算后面的车
@@ -149,7 +153,7 @@ void Layout::simulate(double time)
                     {
                         //(*it)->move((*it)->m_pos - lastPos, m_period);
                         (*it)->m_distance = (*it)->m_pos - lastPos;
-                        if ((*it)->m_distance <= 0)
+                        /*if ((*it)->m_distance <= 0)
                         {
                             cout << i << "\t" << j << "\t" << k << "\t"
                                  << index + 1 << "/" << m_milepost[j].cars[k].size()
@@ -162,7 +166,7 @@ void Layout::simulate(double time)
                                 cout << car->m_milepostNo << "\t" << car->m_pos << endl;
                                 car = car->m_frontCar;
                             }
-                        }
+                        }*/
                         /*if ((*it)->m_pos > m_milepost[j].mile)
                         {
                             cout << i << "\t" << j << "\t" << k << "\t"
@@ -189,8 +193,10 @@ void Layout::simulate(double time)
                 for (auto it:m_milepost[j].cars[k])
                 {
                     //cout  << i << setw(4) << j << endl;
-                    auto speed = it->m_speed;
+                    //auto speed = it->m_speed;
                     it->move(m_period);
+                    m_milepost[j].statData[k].speedPeriod += it->m_speed;
+                    m_milepost[j].statData[k].carPeriod++;
                     /*if (j == 66 && abs(it->m_speed) <= 1e-5)
                     {
                         cout << it->m_distance << "\t" << it->m_speed << "\t" << speed << "\t" << it->m_pos << "\t"
@@ -216,6 +222,7 @@ void Layout::simulate(double time)
                     else
                     {
                         m_milepost[j - 1].cars[k].push_back(front);
+                        m_milepost[j - 1].statData[k].carFlow++;
                         front->m_pos += m_milepost[j - 1].mile;
                         if (front->m_milepostNo != j)
                         {
@@ -244,81 +251,59 @@ void Layout::simulate(double time)
                         }
                         auto newCar = addCar(m_milepost[j].cars[k],
                                 m_milepost[j].idealSpeed, pos, j);
+                        m_milepost[j].statData[k].carFlow++;
                         if (frontCar) newCar->m_backCar = frontCar->m_backCar;
                         if (newCar->m_backCar)newCar->m_backCar->m_frontCar = newCar;
                         newCar->m_frontCar = frontCar;
                         if (frontCar) frontCar->m_backCar = newCar;
                     }
                 }
+
+                m_milepost[j].statData[k].carTotal += m_milepost[j].cars[k].size();
             }
         }
 
-        if (i % 100 == 0)
+
+        if (i % 600 == 0)
         {
             cout << now << "/" << time << endl;
-            printSpeed();
+            //printSpeed(600);
         }
-
-        /*
-        //if (i % 10 != 0)continue;
-
-        cout << now << endl;
-        //for (int j = 0; j < m_milepost.size(); j++)
-        for (int j = 0; j < 10; j++)
-        {
-            cout << j << '\t';
-            for (int k = 0; k < m_milepost[j].cars.size(); k++)
-            {
-                double speedSum = 0;
-                for (auto it:m_milepost[j].cars[k])
-                {
-                    //cout << it->m_speed << '\t';
-                    speedSum += it->m_speed;
-                }
-                //cout << endl;
-                double speedAvg = m_milepost[j].cars[k].size() > 0 ?
-                                  speedSum / m_milepost[j].cars[k].size() : 0;
-                cout << m_milepost[j].cars[k].size() << '\t' << speedAvg << '\t';
-            }
-            cout << endl;
-        }
-        //cout << endl;*/
 
     }
 }
 
-void Layout::openFiles()
+bool Layout::openFile()
 {
-    m_speed_file.open(m_outputPath + "speed.txt");
+    m_speed_file.open(m_outputPath);
     if (!m_speed_file.is_open())
     {
-        cerr << "Speed Data Failed to Open!" << endl << m_outputPath + "speed.txt";
+        cerr << "Outpur File Failed to Open!" << endl << m_outputPath;
+        return false;
     }
+    return true;
 }
 
-void Layout::closeFiles()
+void Layout::closeFile()
 {
     m_speed_file.close();
 }
 
-void Layout::printSpeed()
+void Layout::printSpeed(double interval)
 {
     for (int i = 0; i < m_milepost.size(); i++)
     {
         for (int j = 0; j < m_milepost[i].cars.size(); j++)
         {
-            double speedSum = 0;
-            for (auto it:m_milepost[i].cars[j])
-            {
-                speedSum += it->m_speed;
-            }
-            double speedAvg = m_milepost[i].cars[j].size() > 0 ?
-                              speedSum / m_milepost[i].cars[j].size() : 0;
-            m_speed_file << i << "\t" << j << "\t" << speedAvg << "\t" << m_milepost[i].cars[j].size() << endl;
-            if (i == 66)
-            {
-                cout << i << "\t" << j << "\t" << speedAvg << "\t" << m_milepost[i].cars[j].size() << endl;
-            }
+            double speedAvg = m_milepost[i].statData[j].carPeriod > 0 ?
+                              m_milepost[i].statData[j].speedPeriod / m_milepost[i].statData[j].carPeriod : 0;
+            double carFlow = m_milepost[i].statData[j].carFlow;
+            double carDensity = m_milepost[i].statData[j].carTotal / interval / m_milepost[i].mile;
+            m_speed_file << i << "\t" << j << "\t"
+                         << speedAvg << "\t"
+                         << carFlow << "\t"
+                         << carDensity << "\t"
+                         << endl;
         }
     }
     m_speed_file << endl;

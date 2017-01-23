@@ -13,10 +13,17 @@
 class Layout
 {
 public:
+    struct stat
+    {
+        double speedPeriod, carTotal;
+        int carPeriod, carFlow;
+    };
+
     struct Milepost
     {
         double idealSpeed, idealDistance, idealPeriod, idealCount;
         double mile, lastEnterTime;
+        std::vector<stat> statData;
         std::vector<std::list<Car *> > cars;
     };
 
@@ -25,7 +32,7 @@ public:
 
     std::string m_outputPath;
 
-    Layout(const vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage);
+    Layout(vector <Data> &m_data, bool isNormal, bool isASC, double autoPercentage);
 
     Car *addCar(std::list<Car *> &carQueue, double speed, double pos, int milepostNo);
 
@@ -33,11 +40,11 @@ public:
 
     ofstream m_speed_file;
 
-    void openFiles();
+    bool openFile();
 
-    void closeFiles();
+    void closeFile();
 
-    void printSpeed();
+    void printSpeed(double interval);
 
 };
 

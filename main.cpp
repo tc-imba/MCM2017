@@ -3,8 +3,8 @@
 
 int main(int argc, char *argv[])
 {
-    const int MAX_ARG = 6;
-    string args[MAX_ARG] = {"5", "0", "0", "0", "0.1", "3600"};
+    const int MAX_ARG = 7;
+    string args[MAX_ARG] = {"5", "0", "0", "0", "0.1", "3600", "1"};
     for (int i = 1; i <= min(argc, MAX_ARG); i++)
     {
         args[i - 1] = argv[i];
@@ -42,7 +42,10 @@ int main(int argc, char *argv[])
     }
     Layout lay(m_data, isNormal, isASC, autoPercentage);
     lay.m_period = period;
-    lay.m_outputPath = "output/" + args[0] + "/";
+    lay.m_outputPath = "output/" + args[0] + "_" + args[6] + ".txt";
+    if (!lay.openFile())return -1;
     lay.simulate(totalTime);
+    lay.printSpeed(totalTime / period);
+    lay.closeFile();
     return 0;
 }
