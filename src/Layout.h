@@ -30,6 +30,12 @@ public:
     std::vector<Milepost> m_milepost;
     double m_period, m_autoPercentage;
 
+    bool m_ban;
+    double m_banStartPos, m_banStartNo, m_banTime;
+    Car* m_banCarBack;
+    std::list<std::pair<Car *, std::vector<std::pair<double, double> > > > m_banData;
+
+
     std::string m_outputPath;
 
     Layout(vector <Data> m_data, bool isNormal, bool isASC, double autoPercentage);
@@ -38,13 +44,15 @@ public:
 
     void simulate(double time = 3600.);
 
-    ofstream m_speed_file;
+    ofstream m_file;
 
     bool openFile();
 
     void closeFile();
 
     void printSpeed(double interval);
+
+    void printBan();
 
 };
 

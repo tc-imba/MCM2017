@@ -29,6 +29,8 @@ public:
 
     int m_milepostNo;
 
+    double m_deltaPos;
+
     Layout *m_layout;
 
     Car(Layout *layout, int milepostNo);

@@ -78,6 +78,7 @@ void Car::move(double period)
     {
         //cout << m_milepostNo << "\t" << m_pos << "\t" << m_frontCar->m_pos << "\t" << newPos << "\t" << newSpeed << endl;
     }
+    m_deltaPos += m_pos - newPos;
     m_pos = newPos;
     m_speed = newSpeed;
     /*if (newSpeed < 1e-5)

@@ -61,6 +61,7 @@ void AutoCar::move(double period)
                 newPos = m_frontCar->m_pos + deltaPos;
             }
             m_speed = m_frontCar->m_speed;
+            m_deltaPos += m_pos - newPos;
             m_pos = newPos;
             return;
         }

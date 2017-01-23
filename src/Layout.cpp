@@ -7,7 +7,7 @@ Layout.cpp
 Layout::Layout(vector <Data> m_data, bool isNormal, bool isASC, double autoPercentage)
 {
     m_autoPercentage = autoPercentage;
-
+    m_ban = false;
     double offsetDistance = 0.;
     if (isASC)
     {
@@ -94,7 +94,7 @@ Car *Layout::addCar(std::list<Car *> &carQueue, double speed, double pos, int mi
 
 void Layout::simulate(double time)
 {
-    int maxI = int(time / m_period + 1);
+    const int maxI = int(time / m_period + 1);
     for (int i = 0; i < 51; i++)
     {
         cout << '*';
@@ -204,12 +204,6 @@ void Layout::simulate(double time)
                     it->move(m_period);
                     m_milepost[j].statData[k].speedPeriod += it->m_speed;
                     m_milepost[j].statData[k].carPeriod++;
-                    /*if (j == 66 && abs(it->m_speed) <= 1e-5)
-                    {
-                        cout << it->m_distance << "\t" << it->m_speed << "\t" << speed << "\t" << it->m_pos << "\t"
-                             << it->m_state
-                             << endl;
-                    }*/
                 }
 
                 // 判断第一辆车是否删除或并入前面
@@ -270,6 +264,92 @@ void Layout::simulate(double time)
             }
         }
 
+        if (i == (maxI / 10) && m_ban)
+        {
+            const double max_distance = 6;
+            // 获取第一根车道上最后一辆车
+            auto back = m_milepost[m_milepost.size() / 2].cars[0].back();
+            auto car = back;
+            std::pair<double, double> pair1(now, 0);
+            std::vector<std::pair<double, double> > vector1(1, pair1);
+            m_banData.push_back(std::make_pair(car, vector1));
+            car->m_deltaPos = 0;
+            m_banStartNo = car->m_milepostNo;
+            m_banStartPos = car->m_pos;
+            m_banCarBack = car;
+            m_banTime = now;
+            double distance = 0;
+            double d = 0;
+            while (distance <= max_distance)
+            {
+                auto front = car->m_frontCar;
+                if (!front) break;
+                if (car->m_milepostNo > front->m_milepostNo)
+                {
+                    for (int j = front->m_milepostNo; j < car->m_milepostNo; j++)
+                    {
+                        d += m_milepost[j].mile;
+                    }
+                }
+                d += car->m_pos - front->m_pos;
+                if (d < max_distance / 120.)
+                {
+                    car = front;
+                    continue;
+                }
+                distance += d;
+                std::pair<double, double> pair2(now, distance);
+                std::vector<std::pair<double, double> > vector2(1, pair2);
+                m_banData.push_back(std::make_pair(car, vector2));
+                car->m_deltaPos = 0;
+                d = 0;
+                car = front;
+            }
+        }
+        else if (i > (maxI / 10) && m_ban && i % (int(time / 36)) == 0)
+        {
+            for (auto &it:m_banData)
+            {
+                auto lastPos = it.second.back().second;
+                it.second.push_back(std::make_pair(now, lastPos + it.first->m_deltaPos));
+                it.first->m_deltaPos = 0;
+            }
+            while (auto front = m_banCarBack->m_backCar)
+            {
+                double d = 0;
+                if (m_banStartNo > front->m_milepostNo)
+                {
+                    for (int j = front->m_milepostNo; j <= m_banStartNo; j++)
+                    {
+                        d += m_milepost[j].mile;
+                    }
+                    d += m_banStartPos - front->m_pos;
+                }
+                else if (m_banStartNo == front->m_milepostNo && m_banStartPos >= front->m_pos)
+                {
+                    d = m_banStartPos - front->m_pos;
+                }
+                if (d > 0)
+                {
+                    if (now - m_banTime > 0.002 * time)
+                    {
+                        std::pair<double, double> pair1(now, d);
+                        std::vector<std::pair<double, double> > vector1(1, pair1);
+                        m_banData.push_front(std::make_pair(front, vector1));
+                        front->m_deltaPos = 0;
+                        m_banTime = now;
+                    }
+                }
+                else break;
+                m_banCarBack = front;
+            }
+
+            if (i > (3 * maxI / 10))
+            {
+                m_ban = false;
+            }
+        }
+
 
         if (i % (maxI / 50) == 0)
         {
@@ -278,13 +358,14 @@ void Layout::simulate(double time)
             //printSpeed(600);
         }
 
+
     }
 }
 
 bool Layout::openFile()
 {
-    m_speed_file.open(m_outputPath);
-    if (!m_speed_file.is_open())
+    m_file.open(m_outputPath);
+    if (!m_file.is_open())
     {
         cerr << "Outpur File Failed to Open!" << endl << m_outputPath;
         return false;
@@ -294,7 +375,7 @@ bool Layout::openFile()
 
 void Layout::closeFile()
 {
-    m_speed_file.close();
+    m_file.close();
 }
 
 void Layout::printSpeed(double interval)
@@ -307,13 +388,27 @@ void Layout::printSpeed(double interval)
                               m_milepost[i].statData[j].speedPeriod / m_milepost[i].statData[j].carPeriod : 0;
             double carFlow = m_milepost[i].statData[j].carFlow;
             double carDensity = m_milepost[i].statData[j].carTotal / interval / m_milepost[i].mile;
-            m_speed_file << i << "\t" << j << "\t"
-                         << speedAvg << "\t"
-                         << carFlow << "\t"
-                         << carDensity << "\t"
-                         << endl;
+            m_file << i << "\t" << j << "\t"
+                   << speedAvg << "\t"
+                   << carFlow << "\t"
+                   << carDensity << "\t"
+                   << endl;
         }
     }
-    m_speed_file << endl;
+    m_file << endl;
     cout << endl;
+}
+
+void Layout::printBan()
+{
+    cout << endl << m_banData.size() << endl;
+    m_file << m_banData.size() << endl;
+    for (auto &it:m_banData)
+    {
+        m_file << it.second.size() << endl;
+        for (auto &it2:it.second)
+        {
+            m_file << it2.first << "\t" << it2.second << endl;
+        }
+    }
 }

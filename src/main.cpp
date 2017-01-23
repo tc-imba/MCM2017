@@ -9,7 +9,7 @@ const double period = 0.1;
 double totalTime = 0;
 string name = "";
 
-int simulate(const std::vector<Data> &m_data, bool isNormal, bool isASC, string autoPercentage)
+int simulate(const std::vector<Data> &m_data, bool isNormal, bool isASC, string autoPercentage, bool ban)
 {
     Layout lay(m_data, isNormal, isASC, atof(autoPercentage.c_str()));
     lay.m_period = period;
@@ -18,19 +18,28 @@ int simulate(const std::vector<Data> &m_data, bool isNormal, bool isASC, string 
     lay.m_outputPath += (isNormal ? "norm_" : "busy_");
     lay.m_outputPath += (isASC ? "asc_" : "desc_");
     lay.m_outputPath += autoPercentage;
+    if (ban)lay.m_outputPath += "_ban";
     lay.m_outputPath += ".txt";
     cout << lay.m_outputPath << endl;
-    if (!lay.openFile())return -1;
+    lay.m_ban = ban;
     lay.simulate(totalTime);
-    lay.printSpeed(totalTime / period);
+    if (!lay.openFile())return -1;
+    if(ban)
+    {
+        lay.printBan();
+    }
+    else
+    {
+        lay.printSpeed(totalTime / period);
+    }
     lay.closeFile();
     return 0;
 }
 
 int main(int argc, char *argv[])
 {
-    const int MAX_ARG = 3;
-    string args[MAX_ARG] = {"5", "3600", ""};
+    const int MAX_ARG = 4;
+    string args[MAX_ARG] = {"5", "0", "3600", ""};
     for (int i = 1; i <= min(argc - 1, MAX_ARG); i++)
     {
         args[i - 1] = argv[i];
@@ -40,12 +49,12 @@ int main(int argc, char *argv[])
     {
         cout << args[i] << "\t";
     }
-    cout << (args[2] == "");
     cout << endl;
 
     name = args[0];
     string filename = "data/" + name + ".txt";
-    totalTime = atof(args[1].c_str());
+    totalTime = atof(args[2].c_str());
+    bool ban = args[1] != "0";
 
     srand((unsigned) time(NULL));
 
@@ -77,18 +86,18 @@ int main(int argc, char *argv[])
 
     for (auto autoPercentage : percentVec)
     {
-        if (args[2] == "" || args[2] == "0")
+        if (args[3] == "" || args[3] == "0")
         {
-            simulate(m_data, false, false, autoPercentage);
+            simulate(m_data, false, false, autoPercentage, ban);
         }
-        if (args[2] == "" || args[2] == "1")
+        if (args[3] == "" || args[3] == "1")
         {
-            simulate(m_data, false, true, autoPercentage);
+            simulate(m_data, false, true, autoPercentage, ban);
         }
-        if (args[2] == "" || args[2] == "2")
+        if (args[3] == "" || args[3] == "2")
         {
-            simulate(m_data, true, false, autoPercentage);
-            simulate(m_data, true, true, autoPercentage);
+            simulate(m_data, true, false, autoPercentage, ban);
+            simulate(m_data, true, true, autoPercentage, ban);
         }
     }
 
