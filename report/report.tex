@@ -82,7 +82,7 @@
 	
 	\begin{itemize}
 		\item \textbf{The size of each vehicle is 16 feet $\times$ 6 feet.} Although there are sedan car, van, wagon and SUV, which are of different sizes, we assume that all vehicles on freeways are sedan cars because they are the major components of traffic.
-		\item \textbf{All the vehicles uniformly accelerate and decelerate.} It is valueless to consider the process of acceleration and deceleration since it has little effect on the traffic flow. We assume a not-self-driving car has constant acceleration ranging from 5 to 7 $mile/h*s$ while a self-driving car has constant acceleration automatically calculated from the distance from the one immediately ahead. Specifically, all vehicles brake at 81576.6 $mile/h^2$. 
+		\item \textbf{All the vehicles uniformly accelerate and decelerate.} It is valueless to consider the process of acceleration and deceleration since it has little effect on the traffic flow. We assume a not-self-driving car has constant acceleration ranging from 5 to 7 $mile/h\cdot s$ while a self-driving car has constant acceleration automatically calculated from the distance from the one immediately ahead. Specifically, all vehicles brake at 81576.6 $mile\cdot h^{-2}$. 
 		\item \textbf{The distance between two vehicles tends to maintain some specific value.} We assume that all vehicles are spaced compactly, which means they maintain some minimal safety distance and don’t spread apart. The detailed calculation method of safety distance is shown in Section \ref{sd}. For a not-self-driving vehicle, if the distance from the one immediately ahead is 10\% less than the safety distance, the vehicle decelerates and if the real distance is 10\% more than the safety distance, the vehicle accelerates. For a self-driving vehicle, as long as the real distance is not the same as safety distance, it adjusts its velocity. 
 		\item \textbf{We don’t consider abnormal phenomena.} Accidents, violation of traffic regulations (e.g. speeding) and any other special circumstance are of negligible researching significance in this case.
 		\item \textbf{Either of the two directions accounts for half of the average daily traffic.} We assume same traffic volume for both sides of the roads.
@@ -201,21 +201,58 @@
 				\toprule
 				velocity[mile/h] & $ 0\sim20 $  & $ 20\sim40 $ & $ 40\sim60 $ \\
 				\midrule
-				Safe Distance $ s_c $[feet]  & 4     & 30    & 80 \\
-				Safe Range[feet] & $ 0\sim10 $  & $ 10\sim50 $ & $ 50\sim110 $ \\
+				Safe Distance $ s_c $[feet]  & 4     & 29    & 84 \\
+				Safe Range[feet] & $ 0\sim4 $  & $ 4\sim54 $ & more than $ 49 $ \\
 				\bottomrule
 			\end{tabular}%
 			\caption{The relation between the safe distance, the safe range and velocity}
 			\label{range}%
 		\end{table}%
 		
-		For any two self-driving vehicles, if the velocity of the latter one falls on $ 20\sim 40\  mile/h $ and the distance between two cars falls on the corresponding safe range, here it is $ 10\sim50\  feet$, after a period of time, the distance is set as the safe distance, which is called a stable situation. In this process, we omit how the self-driving change its acceleration and adjust the distance but focus on the stable situation. As the stable situation is reached, with cooperation, the latter vehicle can just copy the action of the former one until their velocity no longer falls on $ 20\sim 40\  mile/h $, then they change velocity and approach another stable situation. If the distance between the two cars does not fall on the corresponding safe range, the latter vehicle travels with a constant acceleration until the distance enters the safe range.
+		An example about how this works is shown as follows:
+		
+		For any two self-driving vehicles, if the velocity of the two vehicles both fall on $ 20\sim 40\  mile/h $ and the distance between two cars falls on the corresponding safe range, here it is $ 4\sim54\  feet$, after a period of time, the distance is set as the safe distance. At first, the latter car will accelerate with the origin acceleration we assume. In the last 0.1 second, it somehow adjust the distance as the safe distance as well as make their velocity the same, which is called a stable situation. In this process, we omit how the self-driving change its acceleration and adjust the distance but focus on the stable situation. As the stable situation is reached, with cooperation, the latter vehicle can just copy the action of the former one until their velocity no longer falls on $ 20\sim 40\  mile/h $, then they change velocity and approach another stable situation. If the distance between the two cars does not fall on the corresponding safe range, the latter vehicle travels with a constant acceleration until the distance enters the safe range.
 	\end{itemize}
 	
 	
 	
-	\section{Model Testing}
+	\section{Results}
+	\subsection{Influencing factors}
+	%时空斑图
+	
+	\subsubsection{Variables and Criteria}
+	There are three variables: number of lanes, peak and/or average traffic volume, and percentage of vehicles using self-driving, cooperating systems. We need a comprehensive evaluation index to indicate the performance on different conditions, so we propose the following criteria:
+	\begin{itemize}
+		\item \textbf{Average speed ($v$)}: the average speed of all vehicles driving on highways with a specific number of lanes over an hour.
+		$$v_{i,nlane}=\dfrac{\sum\limits_{j=1}^{N_i}v_{ij,nlane}}{{N_i}}$$
+		$$v_{nlane}=\dfrac{\sum\limits_{i=1}^nv_{i,nlane}\times l_i}{\sum\limits_{i=1}^nl_i}$$
+		where $v_{ij,nlane}$ stands for the average speed of the $j_{th}$ car on the $i_{th}$ section of the freeway which has \textit{nlane} lanes, $v_{i,nlane}$ stands for the average speed of all the vehicles on the $i_{th}$ section of the freeway which has \textit{nlane} lanes and $v_{nlane}$ stands for the average speed of all the vehicles on the freeway which has \textit{nlane} lanes. ${N_i}$ and $n$ stands for the total number of vehicles on the $i_{th}$ section of the freeway and the number of sections. $l_i$ stands for the length of the $i_{th}$ section of the freeway.
+		
+		\item \textbf{Density ($\rho$)}: the total number of vehicles per unit length of the freeway.
+		$$\rho_{i,nlane}=\dfrac{\sum\limits_{lane=1}^{\#lane}n_{i,lane}}{l_i}$$
+		$$\rho_{nlane}=\dfrac{\sum\limits_{i=1}^{n}\rho_{i,nlane}}{n}$$
+		where $n_{i,lane}$ stands for the number of vehicles on the $lane_{th}$ lane of the $i_{th}$ section of the freeway, $\rho_{i,nlane}$ stands for the density of the $i_{th}$ section of the road which has \textit{nlane} lanes and $\rho_{nlane}$ stands for the average density of all the sections of the freeway which has \textit{nlane} lanes.
+		
+		\item \textbf{Flow ($q$)}: the total number of vehicles passing a milepost per hour.
+		$$q_{i,nlane}=\sum\limits_{lane=1}^{\#lane}q_{i,lane}$$
+		$$q_{nlane}=\dfrac{\sum\limits_{i=1}^{n}q_{i,nlane}}{n}$$
+		where $q_{i,lane}$ stands for the flow of the $lane_{th}$ lane of the $i_{th}$ section of the freeway which has \textit{nlane} lanes and $q_{nlane}$ stands for the average flow of all the sections of the freeway which has \textit{nlane} lanes.
+	\end{itemize}
+	
+	\subsubsection{Percentage of the vehicles using self-driving cars and number of lanes}%折线图
+	\subsubsection{Peak and/or average traffic volume }%直方图
+	
+	\subsection{Optimal situation investigation}
+	\subsubsection{Comprehensive Evaluation Index}
+	
+	
 	\section{Sensitivity Analysis}
+	\subsection{Probability of Random Deceleration}
+	In the simulation, we suppose the probability of random deceleration is 0.3. Indeed, we find little information about it. Since the random deceleration depends on human behavior which may be influenced by people's feeling, weather, surroundings and many other uncontrollable factors, it is hard to be determined and adapt to all the circumstances. If the probability is raised, it adds to the traffic condition and vice versa. 
+	\subsection{Choice of Acceleration}
+	There are two kinds of acceleration in this model. One is the maximum acceleration which is used for calculation of the stopping distance. This acceleration is achieved by information from website\cite{stopping}. However, it is still an approximate value which affected by the performance of the vehicles, the road condition like down hill or snow and ice. Another acceleration is the usual acceleration which is randomly chosen from 5 to 7 $ mile\cdot h\cdot s $. This is also determined from the website\cite{acc}. In this model, the choice of acceleration and deceleration is the same, but in fact, acceleration is related to the motor while deceleration is related to the brake. If the acceleration is raised, it helps to increase the traffic flow.
+	\subsection{Reaction Time}
+	The reaction time ranges from 0.5 to 1.25 second.\ref{sd} To make an overall consideration, we choose 1 second as the reaction time. The longer reaction time leads to harder traffic condition.
 	\section{Strengths and Weaknesses}
 	
 	
@@ -228,6 +265,7 @@
 		\bibitem{stopping} Neilsen, Joel. "Stopping Distance", Safe Drive Training,  \url{<http://sdt.com.au/safedrive-directory-STOPPINGDISTANCE.htm>.} Accessed 21 January 2017. 
 		\bibitem{} Shiffman, Daniel. "Cellular Automata", \textit{The Nature of Code}, Lightning Source Inc, 2008. 323-354. Print.
 		\bibitem{phantom} Stromberg, Joseph. "Why do traffic jams sometimes form for no reason?", Vox, \url{< http://www.vox.com/2014/11/24/7276027/traffic-jam>.} Accessed 22 January 2017. 
+		\bibitem{acc} Consumer Reports, "Best \& Worst Car Acceleration", Consumer Reports, \url{<http://www.consumerreports.org/cro/news/2012/05/best-worst-acceleration/index.htm>.} Accessed 23 January 2017.
 	\end{thebibliography}
 	
 \end{document}
