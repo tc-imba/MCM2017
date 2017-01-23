@@ -70,7 +70,7 @@ CTestTestfile.cmake
 ## Plugin-specific files:
 
 # IntelliJ
-/output/
+# /output/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -145,4 +145,4 @@ dkms.conf
 out
 gen
 
-!output/.gitkeep
+#!output/.gitkeep
